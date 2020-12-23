@@ -1,5 +1,5 @@
-#ifndef CONSOLEUI_BOARDVIEW_H_
-#define CONSOLEUI_BOARDVIEW_H_
+#ifndef CLEAN2048_CONSOLEUI_BOARDVIEW_H_
+#define CLEAN2048_CONSOLEUI_BOARDVIEW_H_
 
 #include <algorithm>
 #include <cassert>

@@ -23,7 +23,7 @@ TEST_CASE("Body of empty board") {
 TEST_CASE("Body of new actions") {
   console_ui::BoardView boardView;
   boardView.intiWithDimension(4, 4);
-  model::Actions newActions{
+  common::model::Actions newActions{
       {},
       {
           {{1, 1}, 2},
@@ -48,7 +48,7 @@ TEST_CASE("Body of new actions") {
 TEST_CASE("Bodies of move actions") {
   console_ui::BoardView boardView;
   boardView.intiWithDimension(4, 4);
-  model::Actions newActions{
+  common::model::Actions newActions{
       {},
       {
           {{1, 1}, 2},
@@ -69,7 +69,7 @@ TEST_CASE("Bodies of move actions") {
 ---------------------------------
 
 )");
-  model::Actions moveActions{
+  common::model::Actions moveActions{
       {
           {{1, 1}, {1, 3}},
           {{2, 2}, {2, 3}},
@@ -107,7 +107,7 @@ TEST_CASE("Bodies of move actions") {
 TEST_CASE("Bodies of move, new and double actions") {
   console_ui::BoardView boardView;
   boardView.intiWithDimension(4, 4);
-  model::Actions newActions{
+  common::model::Actions newActions{
       {},
       {
           {{1, 1}, 2},
@@ -129,7 +129,7 @@ TEST_CASE("Bodies of move, new and double actions") {
 ---------------------------------
 
 )");
-  model::Actions actions{
+  common::model::Actions actions{
       {
           {{1, 1}, {1, 3}},
           {{2, 2}, {2, 3}},
