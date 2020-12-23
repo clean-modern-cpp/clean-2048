@@ -1,0 +1,3 @@
+add_executable(console_ui_tests BoardViewTests.cpp)
+# target_include_directories(console_ui_tests PRIVATE ../src)
+target_link_libraries(console_ui_tests PRIVATE doctest console_ui)

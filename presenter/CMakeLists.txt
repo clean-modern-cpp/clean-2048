@@ -1,0 +1,3 @@
+add_library(presenter INTERFACE)
+target_include_directories(presenter INTERFACE include)
+target_link_libraries(presenter INTERFACE use_case)
