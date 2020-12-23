@@ -17,5 +17,6 @@ add_compile_options(-Wall -Werror -Wextra -pedantic)
 
 add_subdirectory(common)
 add_subdirectory(console_ui)
+add_subdirectory(entity)
 add_subdirectory(presenter)
 add_subdirectory(use_case)
