@@ -138,7 +138,7 @@ TEST_CASE("Bodies of move, new and double actions") {
           {{1, 0}, 4},
       },
       {
-          {1, 3},
+          {{1, 3}, 2, 4},
       },
   };
   boardView.presentActions(actions);

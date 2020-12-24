@@ -1,169 +1,153 @@
 #include "entity/Board.h"
 
+#include <cassert>
+
 namespace entity {
 
-template <int Size>
+template <Index Size>
 constexpr auto totalSizeOfMatrix = Size* Size;
 
-template <int Size>
-using Matrix = std::vector<int>;
-
 struct BaseDirectionTraits {
-  explicit BaseDirectionTraits(const int begin, const int end, const int offset)
+  explicit BaseDirectionTraits(Index begin, Index end, Index offset)
       : begin{begin}, end{end}, offset{offset} {}
-  const int begin;
-  const int end;
-  const int offset;
+  const Index begin;
+  const Index end;
+  const Index offset;
 };
 
-template <common::model::Direction D, int Size>
+template <Direction D, Index Size>
 struct DirectionTraits {};
 
-template <int Size>
-struct DirectionTraits<common::model::Direction::left, Size>
-    : BaseDirectionTraits {
-  explicit DirectionTraits(int lineId)
-      : BaseDirectionTraits{lineId * Size, lineId * Size + Size, 1} {}
+template <Index Size>
+struct DirectionTraits<Direction::left, Size> : BaseDirectionTraits {
+  explicit DirectionTraits(Index line)
+      : BaseDirectionTraits{line * Size, line * Size + Size, 1} {}
 };
 
 template <int Size>
-struct DirectionTraits<common::model::Direction::right, Size>
-    : BaseDirectionTraits {
-  explicit DirectionTraits(int lineId)
-      : BaseDirectionTraits{(lineId + 1) * Size - 1, lineId * Size - 1, -1} {}
+struct DirectionTraits<Direction::right, Size> : BaseDirectionTraits {
+  explicit DirectionTraits(Index line)
+      : BaseDirectionTraits{(line + 1) * Size - 1, line * Size - 1, -1} {}
 };
 
 template <int Size>
-struct DirectionTraits<common::model::Direction::up, Size>
-    : BaseDirectionTraits {
-  explicit DirectionTraits(int lineId)
-      : BaseDirectionTraits{lineId, totalSizeOfMatrix<Size>, Size} {}
+struct DirectionTraits<Direction::up, Size> : BaseDirectionTraits {
+  explicit DirectionTraits(Index line)
+      : BaseDirectionTraits{line, totalSizeOfMatrix<Size>, Size} {}
 };
 
 template <int Size>
-struct DirectionTraits<common::model::Direction::down, Size>
-    : BaseDirectionTraits {
-  explicit DirectionTraits(int lineId)
-      : BaseDirectionTraits{totalSizeOfMatrix<Size> - lineId - 1, -1, -Size} {}
+struct DirectionTraits<Direction::down, Size> : BaseDirectionTraits {
+  explicit DirectionTraits(Index line)
+      : BaseDirectionTraits{totalSizeOfMatrix<Size> - line - 1, -1, -Size} {}
 };
 
-template <common::model::Direction D, int Size>
-inline static int next(int index, const DirectionTraits<D, Size>& dt) {
+template <Direction D, int Size>
+inline static Index next(Index index, const DirectionTraits<D, Size>& dt) {
   return index + dt.offset;
 }
 
-template <common::model::Direction D, int Size>
-inline static bool isInLine(int index, const DirectionTraits<D, Size>& dt) {
+template <Direction D, int Size>
+inline static bool isInLine(Index index, const DirectionTraits<D, Size>& dt) {
   return dt.offset > 0 ? index < dt.end : index > dt.end;
 }
 
 class Board::Impl {
  public:
-  Impl() : numbers(totalSizeOfMatrix<Size>, empty) {}
+  Impl() : values(totalSizeOfMatrix<Size>, empty) {}
 
-  Tiles tiles() const {
-    Tiles tiles;
-    forEachTile([&](int row, int column, int number) {
-      tiles.emplace_back(Position{row, column}, number);
-    });
-    return tiles;
+  Positions emptyPositions() const {
+    Positions positions;
+    for (auto index = 0; index < totalSizeOfMatrix<Size>; ++index) {
+      if (values[index] == empty) {
+        positions.push_back(positionOf(index));
+      }
+    }
+    return positions;
   }
 
-  void addTile(const Tile& tile) {
-    assert(tile.pos.row >= 0 && tile.pos.row < Size);
-    assert(tile.pos.column >= 0 && tile.pos.column < Size);
-    assert(numbers[indexOf(tile.pos)] == empty);
-    numbers[indexOf(tile.pos)] = tile.number;
+  NewAction addCell(Position pos, Value value) {
+    assert(pos.row >= 0 && pos.row < Size);
+    assert(pos.column >= 0 && pos.column < Size);
+    assert(values[indexOf(pos)] == empty);
+    values[indexOf(pos)] = value;
+    return {pos, value};
   }
 
-  void move(common::model::Direction direction) {
-    for (auto lineId = 0; lineId < Size; ++lineId) {
+  SwipeAction swipe(Direction direction) {
+    SwipeAction action;
+    for (auto line = 0; line < Size; ++line) {
       switch (direction) {
-        case common::model::Direction::left:
-          move<common::model::Direction::left>(lineId);
+        case Direction::left:
+          moveLine<Direction::left>(line, action);
           break;
-        case common::model::Direction::right:
-          move<common::model::Direction::right>(lineId);
+        case Direction::right:
+          moveLine<Direction::right>(line, action);
           break;
-        case common::model::Direction::up:
-          move<common::model::Direction::up>(lineId);
+        case Direction::up:
+          moveLine<Direction::up>(line, action);
           break;
-        case common::model::Direction::down:
-          move<common::model::Direction::down>(lineId);
+        case Direction::down:
+          moveLine<Direction::down>(line, action);
           break;
       }
     }
+    return action;
   }
 
  private:
-  int rowOf(int index) const { return index / Size; }
-  int columnOf(int index) const { return index % Size; }
-  int indexOf(Position pos) const { return pos.row * Size + pos.column; }
-
-  template <typename FUNC>
-  void forEach(FUNC func) const {
-    for (auto i = 0; i < static_cast<int>(numbers.size()); ++i) {
-      func(rowOf(i), columnOf(i), numbers[i]);
-    }
+  static Index indexOf(Position pos) { return pos.row * Size + pos.column; }
+  static Position positionOf(Index index) {
+    return {index / Size, index % Size};
   }
 
-  template <typename FUNC>
-  void forEachTile(FUNC func) const {
-    forEach([&](int row, int column, int number) {
-      if (number != empty) {
-        func(row, column, number);
-      }
-    });
-  }
-
-  template <typename FUNC>
-  void forEachEmptyCell(FUNC func) const {
-    forEach([&](int row, int column, int number) {
-      if (number == empty) {
-        func(row, column, number);
-      }
-    });
-  }
-
-  template <common::model::Direction direction>
-  void move(int lineId) {
-    const DirectionTraits<direction, Size> dt{lineId};
-    int target = dt.begin;
-    int src = next(target, dt);
-    while (isInLine(target, dt) && isInLine(src, dt)) {
-      while (isInLine(src, dt) && numbers[src] == empty) {
+  template <Direction direction>
+  void moveLine(Index line, SwipeAction& action) {
+    const DirectionTraits<direction, Size> dt{line};
+    Index dest = dt.begin;
+    Index src = next(dest, dt);
+    while (isInLine(dest, dt) && isInLine(src, dt)) {
+      while (isInLine(src, dt) && values[src] == empty) {
         src = next(src, dt);
       }
       if (isInLine(src, dt)) {
-        if (numbers[target] == empty) {
-          std::swap(numbers[target], numbers[src]);
-        } else if (numbers[target] != numbers[src]) {
-          target = next(target, dt);
-          std::swap(numbers[target], numbers[src]);
+        if (values[dest] == empty) {
+          std::swap(values[dest], values[src]);
+          action.moveActions.emplace_back(positionOf(src), positionOf(dest));
+        } else if (values[dest] != values[src]) {
+          dest = next(dest, dt);
+          std::swap(values[dest], values[src]);
+          action.moveActions.emplace_back(positionOf(src), positionOf(dest));
         } else {
-          numbers[target] *= 2;
-          numbers[src] = empty;
-          target = next(target, dt);
+          const Value from = values[dest];
+          values[dest] = from * 2;
+          values[src] = empty;
+          action.moveActions.emplace_back(positionOf(src), positionOf(dest));
+          action.changeActions.emplace_back(positionOf(dest), from,
+                                            values[dest]);
+          dest = next(dest, dt);
         }
         src = next(src, dt);
       }
     }
   }
 
-  constexpr static int empty = 0;
-  constexpr static int Size = 4;
+  constexpr static Value empty = 0;
+  constexpr static Index Size = 4;
 
-  std::vector<int> numbers;
+  std::vector<Value> values;
 };
 
 Board::Board() : impl{std::make_unique<Impl>()} {}
 
 Board::~Board() {}
 
-Tiles Board::tiles() const { return impl->tiles(); }
+Positions Board::emptyPositions() const { return impl->emptyPositions(); }
 
-void Board::addTile(const Tile& tile) { return impl->addTile(tile); }
+NewAction Board::addCell(Position pos, Value value) {
+  return impl->addCell(pos, value);
+}
 
-void Board::move(common::model::Direction direction) { impl->move(direction); }
+SwipeAction Board::swipe(Direction direction) { return impl->swipe(direction); }
 
 }  // namespace entity

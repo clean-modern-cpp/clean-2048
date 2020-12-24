@@ -60,7 +60,7 @@ class BoardView : public presenter::BoardPresenterDelegate {
   }
 
   void doubleTiles() {
-    for (auto& action : actions.doubleActions) {
+    for (auto& action : actions.changeActions) {
       assert(cellAt(action.pos) != emptyTile);
       cellAt(action.pos) *= 2;
     }
