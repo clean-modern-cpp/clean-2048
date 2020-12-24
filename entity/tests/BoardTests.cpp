@@ -1,9 +1,26 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 
+#include <algorithm>
 #include <vector>
 
 #include "entity/Board.h"
+
+inline entity::Positions allPositions(entity::Index size) {
+  entity::Positions positions;
+  std::generate_n(std::back_inserter(positions), size * size,
+                  [&, index = 0]() mutable {
+                    return entity::Position{index / size, index++ % size};
+                  });
+  return positions;
+}
+
+inline entity::Positions erase(entity::Positions positions,
+                               entity::Position pos) {
+  auto result = std::move(positions);
+  result.erase(std::remove(result.begin(), result.end(), pos), result.end());
+  return result;
+}
 
 /*
  *  0 0 0 0
@@ -13,9 +30,7 @@
  */
 TEST_CASE("Empty board") {
   entity::Board board;
-  auto emptyPositions = board.emptyPositions();
-  // REQUIRE_EQ(PositionSet(emptyPositions.begin(), emptyPositions.end()),
-  //            allPositions());
+  REQUIRE_EQ(board.emptyPositions(), allPositions(4));
 }
 
 /*
@@ -28,11 +43,8 @@ TEST_CASE("Add one cell") {
   entity::Board board;
   entity::NewAction expectedAction{{1, 1}, 2};
   REQUIRE_EQ(board.addCell({1, 1}, 2), expectedAction);
-  // auto emptyPositions = board.emptyPositions();
-  // auto expectedPositionSet = allPositions();
-  // expectedPositionSet.erase({1, 1});
-  // REQUIRE_EQ(PositionSet(emptyPositions.begin(), emptyPositions.end()),
-  //            expectedPositionSet);
+  auto expectedPositions = erase(allPositions(4), {1, 1});
+  REQUIRE_EQ(board.emptyPositions(), expectedPositions);
 }
 
 /*
@@ -51,6 +63,8 @@ TEST_CASE("Move one tile left") {
       {},
   };
   REQUIRE_EQ(board.swipe(entity::Direction::left), expectedAction);
+  auto expectedPositions = erase(allPositions(4), {1, 0});
+  REQUIRE_EQ(board.emptyPositions(), expectedPositions);
 }
 
 /*

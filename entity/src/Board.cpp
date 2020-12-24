@@ -1,5 +1,6 @@
 #include "entity/Board.h"
 
+#include <algorithm>
 #include <cassert>
 
 namespace entity {
