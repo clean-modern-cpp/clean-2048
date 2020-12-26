@@ -1,4 +1,5 @@
-add_executable(use_case_tests GameTests.cpp)
-target_link_libraries(use_case_tests PRIVATE doctest entity common)
+add_executable(use_case_tests main.cpp GameTests.cpp RandomTests.cpp)
+target_include_directories(use_case_tests PRIVATE ../src)
+target_link_libraries(use_case_tests PRIVATE doctest use_case entity common)
 
 doctest_discover_tests(use_case_tests)

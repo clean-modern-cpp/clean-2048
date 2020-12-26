@@ -2,6 +2,7 @@
 #include <doctest/doctest.h>
 
 #include <algorithm>
+#include <ostream>
 #include <vector>
 
 #include "entity/Board.h"

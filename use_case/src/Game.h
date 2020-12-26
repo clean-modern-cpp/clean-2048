@@ -1,18 +1,41 @@
 #ifndef CLEAN2048_USECASE_GAME_H_
 #define CLEAN2048_USECASE_GAME_H_
 
+#include <memory>
+
+#include "RandomImpl.h"
 #include "entity/Board.h"
 #include "use_case/GamePlay.h"
+#include "use_case/Model.h"
 
 namespace use_case {
 
 class Game : public GamePlay {
  public:
-  void newGame() override {}
+  Game() : random{std::make_unique<RandomImpl>()} {}
+
+  void setRandom(std::unique_ptr<Random> r) { random = std::move(r); }
+
+  Actions newGame() override {
+    Actions actions;
+    board.clear();
+    actions.newActions.push_back(newCell());
+    actions.newActions.push_back(newCell());
+    return actions;
+  }
+
   void swipe(Direction) override {}
 
  private:
+  NewAction newCell() {
+    const auto emptyPositions = board.emptyPositions();
+    const auto pos = emptyPositions[random->next(0, emptyPositions.size() - 1)];
+    const auto value = random->next(1, 10) == 1 ? 4 : 2;
+    return board.addCell(pos, value);
+  }
+
   entity::Board board;
+  std::unique_ptr<Random> random;
 };
 
 }  // namespace use_case
