@@ -1,5 +1,5 @@
-#ifndef CLEAN2048_QWIDGETUI_GAMEVIEW_H_
-#define CLEAN2048_QWIDGETUI_GAMEVIEW_H_
+#ifndef CLEAN2048_QWIDGETUI_BOARDVIEW_H_
+#define CLEAN2048_QWIDGETUI_BOARDVIEW_H_
 
 #include <QWidget>
 
@@ -16,11 +16,11 @@ struct Animation {
   int digit2;
 };
 
-class GameView : public QWidget {
+class BoardView : public QWidget {
   Q_OBJECT
 
  public:
-  explicit GameView(QWidget *parent = 0);
+  explicit BoardView(QWidget *parent = 0);
 
  protected:
   void keyPressEvent(QKeyEvent *event);

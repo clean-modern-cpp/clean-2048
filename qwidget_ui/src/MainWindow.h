@@ -3,8 +3,12 @@
 
 #include <QLabel>
 #include <QPushButton>
+#include <QWidget>
 
-#include "GameView.h"
+class BoardView;
+namespace Ui {
+class MainWindow;
+}
 
 class MainWindow : public QWidget {
   Q_OBJECT
@@ -14,26 +18,11 @@ class MainWindow : public QWidget {
   ~MainWindow();
 
  private:
-  QPushButton *restartBtn;
-  QPushButton *closeBtn;
-  QLabel *titleLabel;
-  QLabel *tipsLabel;
-  QLabel *scoreLbl;
-  QLabel *highScoreLbl;
-  GameView *gameView;
-  qreal ratioW, ratioH;
   int highScore;
-  QPoint dragPosition;
-  bool bPressFlag;
+  Ui::MainWindow *ui;
 
- protected:
-  void resizeEvent(QResizeEvent *);
   void keyPressEvent(QKeyEvent *event);
-  void mousePressEvent(QMouseEvent *event);
-  void mouseMoveEvent(QMouseEvent *event);
-  void mouseReleaseEvent(QMouseEvent *event);
 
- public slots:
   void onScoreInc(int);
   void onGameOver();
   void onWin();

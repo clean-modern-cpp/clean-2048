@@ -1,4 +1,4 @@
-#include "GameView.h"
+#include "BoardView.h"
 
 #include <QEventLoop>
 #include <QKeyEvent>
@@ -16,7 +16,7 @@ QColor digitBkg[11] = {
 QPointF dPos[5] = {QPointF(-10, 0), QPointF(10, 0), QPointF(0, -10),
                    QPointF(0, 10), QPointF(-2, -2)};
 
-GameView::GameView(QWidget *parent) : QWidget(parent) {
+BoardView::BoardView(QWidget *parent) : QWidget(parent) {
   connect(this, SIGNAL(GestureMove(GestureDirect)),
           SLOT(onGestureMove(GestureDirect)));
   memset(board, 0, sizeof(board));
@@ -37,7 +37,7 @@ GameView::GameView(QWidget *parent) : QWidget(parent) {
   cacheImg = NULL;
 }
 
-void GameView::keyPressEvent(QKeyEvent *event) {
+void BoardView::keyPressEvent(QKeyEvent *event) {
   if (isAnimating) return;
   switch (event->key()) {
     case Qt::Key_Left:
@@ -58,9 +58,9 @@ void GameView::keyPressEvent(QKeyEvent *event) {
   QWidget::keyPressEvent(event);
 }
 
-void GameView::mousePressEvent(QMouseEvent *e) { startPos = e->pos(); }
+void BoardView::mousePressEvent(QMouseEvent *e) { startPos = e->pos(); }
 
-void GameView::mouseReleaseEvent(QMouseEvent *e) {
+void BoardView::mouseReleaseEvent(QMouseEvent *e) {
   if (isAnimating) return;
   float dX = (float)(e->pos().x() - startPos.x());
   float dY = (float)(e->pos().y() - startPos.y());
@@ -77,7 +77,7 @@ void GameView::mouseReleaseEvent(QMouseEvent *e) {
   }
 }
 
-void GameView::onGestureMove(GestureDirect direct) {
+void BoardView::onGestureMove(GestureDirect direct) {
   int i, j, k;
   Animation a;
   bool combine = false;
@@ -260,7 +260,7 @@ void GameView::onGestureMove(GestureDirect direct) {
   update();
 }
 
-bool GameView::playAnimation(Animation &a, QPainter &painter) {
+bool BoardView::playAnimation(Animation &a, QPainter &painter) {
   bool rtn = false;
   QBrush brush(Qt::SolidPattern);
 
@@ -324,7 +324,7 @@ bool GameView::playAnimation(Animation &a, QPainter &painter) {
   return rtn;
 }
 
-void GameView::paintEvent(QPaintEvent *) {
+void BoardView::paintEvent(QPaintEvent *) {
   QPainter painter(this);
   if (isAnimating) {
     painter.drawImage(0, 0, *cacheImg);
@@ -359,7 +359,7 @@ void GameView::paintEvent(QPaintEvent *) {
     }
 }
 
-void GameView::restart() {
+void BoardView::restart() {
   score = 0;
   digitCount = 2;
   memset(board, 0, sizeof(board));
@@ -378,7 +378,7 @@ void GameView::restart() {
   update();
 }
 
-bool GameView::checkGameOver() {
+bool BoardView::checkGameOver() {
   for (int i = 0; i < 4; i++)
     for (int j = 0; j < 4; j++) {
       if (j != 3 && board[i][j] == board[i][j + 1]) return false;
@@ -387,14 +387,14 @@ bool GameView::checkGameOver() {
   return true;
 }
 
-bool GameView::checkWin() {
+bool BoardView::checkWin() {
   for (int i = 0; i < 4; i++)
     for (int j = 0; j < 4; j++)
       if (board[i][j] == 2048) return true;
   return false;
 }
 
-int GameView::getBitCount(int n) {
+int BoardView::getBitCount(int n) {
   int c = 0;
   while (n >>= 1) c++;
   return c - 1;
