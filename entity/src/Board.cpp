@@ -67,6 +67,8 @@ class Board::Impl {
     return positions;
   }
 
+  void clear() { values = std::vector<Value>(totalSizeOfMatrix<Size>, empty); }
+
   NewAction addCell(Position pos, Value value) {
     assert(pos.row >= 0 && pos.row < Size);
     assert(pos.column >= 0 && pos.column < Size);
@@ -144,6 +146,8 @@ Board::Board() : impl{std::make_unique<Impl>()} {}
 Board::~Board() {}
 
 Positions Board::emptyPositions() const { return impl->emptyPositions(); }
+
+void Board::clear() { impl->clear(); }
 
 NewAction Board::addCell(Position pos, Value value) {
   return impl->addCell(pos, value);

@@ -83,12 +83,6 @@ inline void addCells(entity::Board &board) {
   }
 }
 
-/*
- *  0 0 0 0
- *  0 0 0 0
- *  0 0 0 0
- *  0 0 0 0
- */
 TEST_CASE("Empty board") {
   entity::Board board;
   REQUIRE_EQ(board.emptyPositions(), allPositions(4));
@@ -97,15 +91,36 @@ TEST_CASE("Empty board") {
 /*
  *  0 0 0 0
  *  0 2 0 0
- *  0 0 4 0
+ *  0 0 0 0
  *  0 0 0 0
  */
 TEST_CASE("Add one cell") {
   entity::Board board;
-  const entity::NewAction expectedAction{{1, 1}, 2};
-  REQUIRE_EQ(board.addCell({1, 1}, 2), expectedAction);
+  REQUIRE_EQ(board.addCell({1, 1}, 2), entity::NewAction{{1, 1}, 2});
   const auto expectedPositions = erase(allPositions(4), {1, 1});
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+}
+
+/*
+ *  0 0 0 0
+ *  0 2 0 0
+ *  0 0 4 0
+ *  0 0 0 0
+ */
+TEST_CASE("Add two cells") {
+  entity::Board board;
+  REQUIRE_EQ(board.addCell({1, 1}, 2), entity::NewAction{{1, 1}, 2});
+  REQUIRE_EQ(board.addCell({2, 2}, 4), entity::NewAction{{2, 2}, 4});
+  const auto expectedPositions = erase(erase(allPositions(4), {1, 1}), {2, 2});
+  REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+}
+
+TEST_CASE("Clear") {
+  entity::Board board;
+  REQUIRE_EQ(board.addCell({1, 1}, 2), entity::NewAction{{1, 1}, 2});
+  REQUIRE_EQ(board.addCell({2, 2}, 4), entity::NewAction{{2, 2}, 4});
+  board.clear();
+  REQUIRE_EQ(board.emptyPositions(), allPositions(4));
 }
 
 /*
@@ -114,7 +129,7 @@ TEST_CASE("Add one cell") {
  *  0 0 0 0          0 0 0 0
  *  0 0 0 0          0 0 0 0
  */
-TEST_CASE("Move one tile left") {
+TEST_CASE("Move one cell left") {
   entity::Board board;
   board.addCell({1, 1}, 2);
   const auto expectedPositionsBefore = erase(allPositions(4), {1, 1});
@@ -137,7 +152,7 @@ TEST_CASE("Move one tile left") {
  *  0 0 0 0           0 0 0 0
  *  0 0 0 0           0 0 0 0
  */
-TEST_CASE("Move one tile right") {
+TEST_CASE("Move one cell right") {
   entity::Board board;
   board.addCell({1, 1}, 2);
   const entity::SwipeAction expectedAction{
@@ -157,7 +172,7 @@ TEST_CASE("Move one tile right") {
  *  0 0 0 0        0 0 0 0
  *  0 0 0 0        0 0 0 0
  */
-TEST_CASE("Move one tile up") {
+TEST_CASE("Move one cell up") {
   entity::Board board;
   board.addCell({1, 1}, 2);
   const entity::SwipeAction expectedAction{
@@ -177,7 +192,7 @@ TEST_CASE("Move one tile up") {
  *  0 0 0 0          0 0 0 0
  *  0 0 0 0          0 2 0 0
  */
-TEST_CASE("Move one tile down") {
+TEST_CASE("Move one cell down") {
   entity::Board board;
   board.addCell({1, 1}, 2);
   const entity::SwipeAction expectedAction{
@@ -197,7 +212,7 @@ TEST_CASE("Move one tile down") {
  *  0 0 0 0          0 0 0 0
  *  0 0 0 0          0 0 0 0
  */
-TEST_CASE("Move two tiles left") {
+TEST_CASE("Move two cells left") {
   entity::Board board;
   board.addCell({1, 1}, 2);
   board.addCell({1, 2}, 4);
@@ -224,7 +239,7 @@ TEST_CASE("Move two tiles left") {
  *  0 0 0 0           0 0 0 0
  *  0 0 0 0           0 0 0 0
  */
-TEST_CASE("Move two tiles right") {
+TEST_CASE("Move two cells right") {
   entity::Board board;
   board.addCell({1, 1}, 2);
   board.addCell({1, 2}, 4);
@@ -246,7 +261,7 @@ TEST_CASE("Move two tiles right") {
  *  0 4 0 0        0 0 0 0
  *  0 0 0 0        0 0 0 0
  */
-TEST_CASE("Move two tiles up") {
+TEST_CASE("Move two cells up") {
   entity::Board board;
   board.addCell({1, 1}, 2);
   board.addCell({2, 1}, 4);
@@ -268,7 +283,7 @@ TEST_CASE("Move two tiles up") {
  *  0 4 0 0          0 2 0 0
  *  0 0 0 0          0 4 0 0
  */
-TEST_CASE("Move two tiles down") {
+TEST_CASE("Move two cells down") {
   entity::Board board;
   board.addCell({1, 1}, 2);
   board.addCell({2, 1}, 4);
@@ -290,7 +305,7 @@ TEST_CASE("Move two tiles down") {
  *  0 0 0 0          0 0 0 0
  *  0 0 0 0          0 0 0 0
  */
-TEST_CASE("Move two tiles left and merge") {
+TEST_CASE("Move two cells left and merge") {
   entity::Board board;
   board.addCell({1, 1}, 2);
   board.addCell({1, 2}, 2);
@@ -318,7 +333,7 @@ TEST_CASE("Move two tiles left and merge") {
  *  0 0 0 0           0 0 0 0
  *  0 0 0 0           0 0 0 0
  */
-TEST_CASE("Move two tiles right and merge") {
+TEST_CASE("Move two cells right and merge") {
   entity::Board board;
   board.addCell({1, 1}, 2);
   board.addCell({1, 2}, 2);
@@ -342,7 +357,7 @@ TEST_CASE("Move two tiles right and merge") {
  *  0 0 0 0        0 0 0 0
  *  0 0 0 0        0 0 0 0
  */
-TEST_CASE("Move two tiles up and merge") {
+TEST_CASE("Move two cells up and merge") {
   entity::Board board;
   board.addCell({0, 1}, 2);
   board.addCell({1, 1}, 2);
@@ -365,7 +380,7 @@ TEST_CASE("Move two tiles up and merge") {
  *  0 2 0 0          0 0 0 0
  *  0 2 0 0          0 4 0 0
  */
-TEST_CASE("Move two tiles up and merge") {
+TEST_CASE("Move two cells up and merge") {
   entity::Board board;
   board.addCell({2, 1}, 2);
   board.addCell({3, 1}, 2);
@@ -388,7 +403,7 @@ TEST_CASE("Move two tiles up and merge") {
  *  0 2 2 2          4 2 0 0
  *  0 2 2 0          4 0 0 0
  */
-TEST_CASE("Move multi-line tiles left and merge") {
+TEST_CASE("Move multi-line cells left and merge") {
   entity::Board board;
   addCells(board);
   const entity::Positions expectedPositionsBefore{
@@ -429,7 +444,7 @@ TEST_CASE("Move multi-line tiles left and merge") {
  *  0 2 2 2           0 0 2 4
  *  0 2 2 0           0 0 0 4
  */
-TEST_CASE("Move multi-line tiles right and merge") {
+TEST_CASE("Move multi-line cells right and merge") {
   entity::Board board;
   addCells(board);
   const entity::SwipeAction expectedAction{
@@ -466,7 +481,7 @@ TEST_CASE("Move multi-line tiles right and merge") {
  *  0 2 2 2        0 0 0 0
  *  0 2 2 0        0 0 0 0
  */
-TEST_CASE("Move multi-line tiles up and merge") {
+TEST_CASE("Move multi-line cells up and merge") {
   entity::Board board;
   addCells(board);
   const entity::SwipeAction expectedAction{
@@ -501,7 +516,7 @@ TEST_CASE("Move multi-line tiles up and merge") {
  *  0 2 2 2          0 8 8 4
  *  0 2 2 0          8 4 4 2
  */
-TEST_CASE("Move multi-line tiles down and merge") {
+TEST_CASE("Move multi-line cells down and merge") {
   entity::Board board;
   addCells(board);
   const entity::SwipeAction expectedAction{

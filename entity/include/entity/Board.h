@@ -32,6 +32,8 @@ class Board {
   ~Board();
 
   Positions emptyPositions() const;
+
+  void clear();
   NewAction addCell(Position pos, Value value);
   SwipeAction swipe(Direction direction);
 
