@@ -4,12 +4,12 @@
 #include <memory>
 
 #include "RandomImpl.h"
-#include "entity/Board.h"
 #include "use_case/GamePlay.h"
 #include "use_case/Model.h"
 
 namespace use_case {
 
+template <typename Board>
 class Game : public GamePlay {
  public:
   Game() : random{std::make_unique<RandomImpl>()} {}
@@ -34,7 +34,7 @@ class Game : public GamePlay {
     return board.addCell(pos, value);
   }
 
-  entity::Board board;
+  Board board;
   std::unique_ptr<Random> random;
 };
 

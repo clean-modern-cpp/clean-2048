@@ -1,8 +1,10 @@
 #include "Game.h"
 
+#include "entity/Board.h"
+
 namespace use_case {
 
-Game game;
+Game<entity::Board> game;
 
 GamePlay* getGamePlay() { return &game; }
 

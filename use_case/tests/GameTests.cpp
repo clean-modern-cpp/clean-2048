@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Game.h"
+#include "entity/Board.h"
 #include "use_case/Model.h"
 #include "use_case/Random.h"
 
@@ -56,6 +57,10 @@ std::ostream &operator<<(std::ostream &os, const use_case::Actions &actions) {
 
 namespace use_case {
 
+bool operator==(const Position &lhs, const Position &rhs) {
+  return lhs.row == rhs.row && lhs.column == rhs.column;
+}
+
 bool operator==(const Actions &lhs, const Actions &rhs) {
   return lhs.newActions == rhs.newActions;
 }
@@ -71,21 +76,66 @@ class RandomMockup : public use_case::Random {
 
  private:
   int index = 0;
-
   /*
-   * [ zero index of empty pos, select value 2 (2-10) or 4 (1), ...]
+   * [ zero index of empty pos, select value 2 (2-10) or 4 (1), ... ]
    */
-  inline static std::vector<int> values{2, 5, 5, 1};
+  inline static std::vector<int> values{2, 5, 1, 1};
+};
+
+class BoardMockup {
+ public:
+  void clear() {
+    REQUIRE_EQ(step, 0);
+    ++step;
+  }
+  use_case::Positions emptyPositions() const {
+    switch (step) {
+      case 1:
+        ++step;
+        return {
+            {0, 0}, {0, 1}, {1, 0}, {1, 1}, {2, 0}, {2, 1},
+        };
+      case 3:
+        ++step;
+        return {
+            {0, 0}, {0, 1}, {1, 1}, {2, 0}, {2, 1},
+        };
+      default:
+        REQUIRE(false);
+        return {};
+    }
+  }
+  use_case::NewAction addCell(use_case::Position pos, use_case::Value value) {
+    switch (step) {
+      case 2:
+        ++step;
+        REQUIRE_EQ(pos, use_case::Position{1, 0});
+        REQUIRE_EQ(value, 2);
+        return {{1, 0}, 2};
+      case 4:
+        ++step;
+        REQUIRE_EQ(pos, use_case::Position{0, 1});
+        REQUIRE_EQ(value, 4);
+        return {{0, 1}, 4};
+      default:
+        REQUIRE(false);
+        return {{0, 0}, 0};
+    }
+  }
+  entity::SwipeAction swipe(use_case::Direction) { return {{}, {}}; }
+
+ private:
+  mutable int step = 0;
 };
 
 TEST_CASE("New game") {
-  use_case::Game game;
+  use_case::Game<BoardMockup> game;
   game.setRandom(std::make_unique<RandomMockup>());
   REQUIRE_EQ(game.newGame(), use_case::Actions{
                                  {},
                                  {
-                                     {{0, 2}, 2},
-                                     {{1, 2}, 4},
+                                     {{1, 0}, 2},
+                                     {{0, 1}, 4},
                                  },
                                  {},
                              });
