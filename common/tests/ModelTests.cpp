@@ -1,6 +1,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 
+#include "common/Model.h"
 #include "common/ModelHelper.h"
 
 TEST_CASE("Position test") {
@@ -11,12 +12,12 @@ TEST_CASE("Position test") {
 
 TEST_CASE("SwipeAction test") {
   common::SwipeAction swipeAction;
-  swipeAction.moveActions.emplace(common::Position{0, 0},
-                                  common::Position{0, 1});
-  swipeAction.moveActions.emplace(common::Position{1, 1},
-                                  common::Position{3, 1});
-  swipeAction.changeActions.emplace(common::Position{0, 0}, 1, 2);
-  swipeAction.changeActions.emplace(common::Position{1, 1}, 2, 4);
+  swipeAction.moveActions.emplace_back(common::Position{0, 0},
+                                       common::Position{0, 1});
+  swipeAction.moveActions.emplace_back(common::Position{1, 1},
+                                       common::Position{3, 1});
+  swipeAction.changeActions.emplace_back(common::Position{0, 0}, 1, 2);
+  swipeAction.changeActions.emplace_back(common::Position{1, 1}, 2, 4);
   REQUIRE_EQ(swipeAction, common::SwipeAction{
                               {
                                   {{0, 0}, {0, 1}},
@@ -31,10 +32,11 @@ TEST_CASE("SwipeAction test") {
 
 TEST_CASE("Actions test") {
   common::Actions actions;
-  actions.moveActions.emplace(common::Position{0, 0}, common::Position{0, 1});
-  actions.newActions.emplace(common::Position{0, 0}, 2);
-  actions.newActions.emplace(common::Position{1, 1}, 4);
-  actions.changeActions.emplace(common::Position{0, 0}, 1, 2);
+  actions.moveActions.emplace_back(common::Position{0, 0},
+                                   common::Position{0, 1});
+  actions.newActions.emplace_back(common::Position{0, 0}, 2);
+  actions.newActions.emplace_back(common::Position{1, 1}, 4);
+  actions.changeActions.emplace_back(common::Position{0, 0}, 1, 2);
   REQUIRE_EQ(actions, common::Actions{
                           {
                               {{0, 0}, {0, 1}},

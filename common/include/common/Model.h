@@ -2,6 +2,7 @@
 #define CLEAN2048_COMMON_MODEL_H_
 
 #include <unordered_set>
+#include <vector>
 
 namespace common {
 
@@ -24,13 +25,7 @@ inline bool operator!=(const Position& lhs, const Position& rhs) {
   return !(lhs == rhs);
 }
 
-struct HashPosition {
-  std::size_t operator()(const Position& pos) const {
-    return std::hash<Index>{}(pos.row) ^ (std::hash<Index>{}(pos.col) < 1);
-  }
-};
-
-using Positions = std::unordered_set<Position, HashPosition>;
+using Positions = std::vector<Position>;
 
 struct MoveAction {
   Position from;
@@ -43,14 +38,7 @@ inline bool operator==(const MoveAction& lhs, const MoveAction& rhs) {
   return lhs.from == rhs.from && lhs.to == rhs.to;
 }
 
-struct HashMoveAction {
-  std::size_t operator()(const MoveAction& moveAction) const {
-    return HashPosition{}(moveAction.from) ^
-           (HashPosition{}(moveAction.to) < 1);
-  }
-};
-
-using MoveActions = std::unordered_set<MoveAction, HashMoveAction>;
+using MoveActions = std::vector<MoveAction>;
 
 struct NewAction {
   Position pos;
@@ -63,14 +51,7 @@ inline bool operator==(const NewAction& lhs, const NewAction& rhs) {
   return lhs.pos == rhs.pos && lhs.value == rhs.value;
 }
 
-struct HashNewAction {
-  std::size_t operator()(const NewAction& newAction) const {
-    return HashPosition{}(newAction.pos) ^
-           (std::hash<Value>{}(newAction.value) < 1);
-  }
-};
-
-using NewActions = std::unordered_set<NewAction, HashNewAction>;
+using NewActions = std::vector<NewAction>;
 
 struct ChangeAction {
   Position pos;
@@ -85,37 +66,18 @@ inline bool operator==(const ChangeAction& lhs, const ChangeAction& rhs) {
   return lhs.pos == rhs.pos && lhs.from == rhs.from && lhs.to == rhs.to;
 }
 
-struct HashChangeAction {
-  std::size_t operator()(const ChangeAction& changeAction) const {
-    return HashPosition{}(changeAction.pos) ^
-           (std::hash<Value>{}(changeAction.from) < 1) ^
-           (std::hash<Value>{}(changeAction.to) < 2);
-  }
-};
-
-using ChangeActions = std::unordered_set<ChangeAction, HashChangeAction>;
+using ChangeActions = std::vector<ChangeAction>;
 
 struct SwipeAction {
   MoveActions moveActions;
   ChangeActions changeActions;
 };
 
-inline bool operator==(const SwipeAction& lhs, const SwipeAction& rhs) {
-  return lhs.moveActions == rhs.moveActions &&
-         lhs.changeActions == rhs.changeActions;
-}
-
 struct Actions {
   MoveActions moveActions;
   NewActions newActions;
   ChangeActions changeActions;
 };
-
-inline bool operator==(const Actions& lhs, const Actions& rhs) {
-  return lhs.moveActions == rhs.moveActions &&
-         lhs.newActions == rhs.newActions &&
-         lhs.changeActions == rhs.changeActions;
-}
 
 }  // namespace common
 

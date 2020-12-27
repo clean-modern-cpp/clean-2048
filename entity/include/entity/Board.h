@@ -7,25 +7,16 @@
 
 namespace entity {
 
-using Index = common::model::Index;
-using Value = common::model::Value;
-using Direction = common::model::Direction;
-using Position = common::model::Position;
-using Positions = common::model::Positions;
-using MoveAction = common::model::MoveAction;
-using NewAction = common::model::NewAction;
-using ChangeAction = common::model::ChangeAction;
-
 class Board {
  public:
   Board();
   ~Board();
 
-  Positions emptyPositions() const;
+  common::Positions emptyPositions() const;
 
   void clear();
-  NewAction addCell(Position pos, Value value);
-  SwipeAction swipe(Direction direction);
+  common::NewAction addCell(common::Position pos, common::Value value);
+  common::SwipeAction swipe(common::Direction direction);
 
  private:
   class Impl;
