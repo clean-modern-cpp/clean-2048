@@ -16,16 +16,6 @@ using MoveAction = common::model::MoveAction;
 using NewAction = common::model::NewAction;
 using ChangeAction = common::model::ChangeAction;
 
-struct SwipeAction {
-  std::vector<MoveAction> moveActions;
-  std::vector<ChangeAction> changeActions;
-
-  friend bool operator==(const SwipeAction& lhs, const SwipeAction& rhs) {
-    return lhs.moveActions == rhs.moveActions &&
-           lhs.changeActions == rhs.changeActions;
-  }
-};
-
 class Board {
  public:
   Board();
