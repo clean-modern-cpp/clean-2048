@@ -3,16 +3,13 @@
 
 #include "common/Model.h"
 #include "common/NonCopyable.h"
-#include "use_case/Model.h"
 
 namespace use_case {
-
-using Direction = common::model::Direction;
 
 class GamePlay : public common::NonCopyable {
  public:
   virtual void newGame() = 0;
-  virtual void swipe(Direction direction) = 0;
+  virtual void swipe(common::Direction direction) = 0;
 };
 
 GamePlay* getGamePlay();

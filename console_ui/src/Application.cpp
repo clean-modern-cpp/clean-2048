@@ -43,13 +43,12 @@ class Application::Impl {
   presenter::Controller controller;
   presenter::BoardPresenter boardPresenter;
 
-  inline static const std::unordered_map<char, common::model::Direction>
-      directionMap{
-          {'l', common::model::Direction::left},
-          {'r', common::model::Direction::right},
-          {'u', common::model::Direction::up},
-          {'d', common::model::Direction::down},
-      };
+  inline static const std::unordered_map<char, common::Direction> directionMap{
+      {'l', common::Direction::left},
+      {'r', common::Direction::right},
+      {'u', common::Direction::up},
+      {'d', common::Direction::down},
+  };
 };
 
 Application::Application() : impl(std::make_unique<Impl>()) {}

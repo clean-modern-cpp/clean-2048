@@ -6,8 +6,8 @@
 #include <iostream>
 #include <vector>
 
+#include "common/Model.h"
 #include "presenter/BoardPresenter.h"
-#include "use_case/Model.h"
 
 namespace console_ui {
 
@@ -26,7 +26,7 @@ class BoardView : public presenter::BoardPresenterDelegate {
     board = Board(row, Row(column, emptyTile));
   }
 
-  void present(use_case::Actions acts) override {
+  void present(common::Actions acts) override {
     std::cout << "board view present\n";
     actions = std::move(acts);
   }
@@ -69,14 +69,11 @@ class BoardView : public presenter::BoardPresenterDelegate {
     }
   }
 
-  int& cellAt(common::model::Position pos) {
-    return board[pos.row][pos.column];
-  }
+  int& cellAt(common::Position pos) { return board[pos.row][pos.col]; }
 
-  common::model::Position moveTo(common::model::Position from,
-                                 common::model::Position to) {
+  common::Position moveTo(common::Position from, common::Position to) {
     return {from.row + diff(from.row, to.row),
-            from.column + diff(from.column, to.column)};
+            from.col + diff(from.col, to.col)};
   }
 
   static int diff(int from, int to) {
@@ -87,7 +84,7 @@ class BoardView : public presenter::BoardPresenterDelegate {
   using Row = std::vector<int>;
   using Board = std::vector<Row>;
 
-  use_case::Actions actions;
+  common::Actions actions;
   Board board;
 };
 

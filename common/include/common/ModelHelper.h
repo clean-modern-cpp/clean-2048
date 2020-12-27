@@ -1,6 +1,7 @@
 #ifndef CLEAN2048_COMMON_MODELHELPER_H_
 #define CLEAN2048_COMMON_MODELHELPER_H_
 
+#include <ostream>
 #include <unordered_set>
 
 #include "common/Model.h"

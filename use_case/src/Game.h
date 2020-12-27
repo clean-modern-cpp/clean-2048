@@ -4,9 +4,9 @@
 #include <memory>
 
 #include "RandomImpl.h"
+#include "common/Model.h"
 #include "use_case/BoardPresenter.h"
 #include "use_case/GamePlay.h"
-#include "use_case/Model.h"
 
 namespace use_case {
 
@@ -25,7 +25,7 @@ class Game : public GamePlay {
       boardPresenter->initWithDimension(4, 4);
     }
     board.clear();
-    Actions actions;
+    common::Actions actions;
     actions.newActions.push_back(newCell());
     actions.newActions.push_back(newCell());
     if (boardPresenter) {
@@ -33,10 +33,10 @@ class Game : public GamePlay {
     }
   }
 
-  void swipe(Direction) override {}
+  void swipe(common::Direction) override {}
 
  private:
-  NewAction newCell() {
+  common::NewAction newCell() {
     const auto emptyPositions = board.emptyPositions();
     const auto pos = emptyPositions[random->next(0, emptyPositions.size() - 1)];
     const auto value = random->next(1, 10) == 1 ? 4 : 2;

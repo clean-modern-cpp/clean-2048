@@ -13,7 +13,7 @@ void BoardPresenter::initWithDimension(int row, int column) const {
   }
 }
 
-void BoardPresenter::present(use_case::Actions actions) const {
+void BoardPresenter::present(common::Actions actions) const {
   if (delegate) {
     delegate->present(actions);
   }
