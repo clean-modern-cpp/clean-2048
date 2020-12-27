@@ -3,8 +3,8 @@
 
 #include <vector>
 
-#include "common/Model.h"
 #include "use_case/BoardPresenter.h"
+#include "use_case/Model.h"
 
 namespace presenter {
 
@@ -16,26 +16,19 @@ class BoardPresenterDelegate {
   virtual ~BoardPresenterDelegate() = default;
 
   virtual void intiWithDimension(int rows, int columns) = 0;
-  virtual void presentActions(common::model::Actions actions) = 0;
+  virtual void present(use_case::Actions actions) = 0;
 };
 
 class BoardPresenter : public use_case::BoardPresenter {
  public:
-  void setDelegate(BoardPresenterDelegate* d) {
-    delegate = d;
-    // use_case::Facade::setBoardPresenter(this);
-  }
+  void setDelegate(BoardPresenterDelegate* d);
 
-  void initWithDimension(int row, int column) override {
-    delegate->intiWithDimension(row, column);
-  }
+  void initWithDimension(int row, int column) const override;
 
-  void presentActions(common::model::Actions actions) override {
-    delegate->presentActions(actions);
-  }
+  void present(use_case::Actions actions) const override;
 
  private:
-  BoardPresenterDelegate* delegate;
+  BoardPresenterDelegate* delegate = nullptr;
 };
 
 }  // namespace presenter

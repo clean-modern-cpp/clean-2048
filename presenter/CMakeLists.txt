@@ -1,3 +1,3 @@
-add_library(presenter INTERFACE)
-target_include_directories(presenter INTERFACE include)
-target_link_libraries(presenter INTERFACE use_case)
+add_library(presenter src/BoardPresenter.cpp src/Controller.cpp)
+target_include_directories(presenter PUBLIC include)
+target_link_libraries(presenter PRIVATE use_case common)

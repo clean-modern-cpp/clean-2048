@@ -11,7 +11,7 @@ using Direction = common::model::Direction;
 
 class GamePlay : public common::NonCopyable {
  public:
-  virtual Actions newGame() = 0;
+  virtual void newGame() = 0;
   virtual void swipe(Direction direction) = 0;
 };
 

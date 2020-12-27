@@ -19,6 +19,9 @@ struct Position {
   friend bool operator==(const Position& lhs, const Position& rhs) {
     return lhs.row == rhs.row && lhs.column == rhs.column;
   }
+  friend bool operator!=(const Position& lhs, const Position& rhs) {
+    return !(lhs == rhs);
+  }
 };
 
 using Positions = std::vector<Position>;

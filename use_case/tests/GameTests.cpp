@@ -128,15 +128,25 @@ class BoardMockup {
   mutable int step = 0;
 };
 
+class BoardPresenterMockup : public use_case::BoardPresenter {
+ public:
+  void initWithDimension(int, int) const override {}
+  void present(use_case::Actions actions) const override {
+    REQUIRE_EQ(actions, use_case::Actions{
+                            {},
+                            {
+                                {{1, 0}, 2},
+                                {{0, 1}, 4},
+                            },
+                            {},
+                        });
+  }
+};
+
 TEST_CASE("New game") {
   use_case::Game<BoardMockup> game;
+  BoardPresenterMockup boardPresenter;
+  game.setBoardPresenter(&boardPresenter);
   game.setRandom(std::make_unique<RandomMockup>());
-  REQUIRE_EQ(game.newGame(), use_case::Actions{
-                                 {},
-                                 {
-                                     {{1, 0}, 2},
-                                     {{0, 1}, 4},
-                                 },
-                                 {},
-                             });
+  game.newGame();
 }

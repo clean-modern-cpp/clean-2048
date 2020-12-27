@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "RandomImpl.h"
+#include "use_case/BoardPresenter.h"
 #include "use_case/GamePlay.h"
 #include "use_case/Model.h"
 
@@ -14,14 +15,22 @@ class Game : public GamePlay {
  public:
   Game() : random{std::make_unique<RandomImpl>()} {}
 
+  void setBoardPresenter(const BoardPresenter* presenter) {
+    boardPresenter = presenter;
+  }
   void setRandom(std::unique_ptr<Random> r) { random = std::move(r); }
 
-  Actions newGame() override {
-    Actions actions;
+  void newGame() override {
+    if (boardPresenter) {
+      boardPresenter->initWithDimension(4, 4);
+    }
     board.clear();
+    Actions actions;
     actions.newActions.push_back(newCell());
     actions.newActions.push_back(newCell());
-    return actions;
+    if (boardPresenter) {
+      boardPresenter->present(actions);
+    }
   }
 
   void swipe(Direction) override {}
@@ -35,6 +44,9 @@ class Game : public GamePlay {
   }
 
   Board board;
+
+  const BoardPresenter* boardPresenter = nullptr;
+
   std::unique_ptr<Random> random;
 };
 

@@ -12,10 +12,10 @@ namespace console_ui {
 
 class Application::Impl {
  public:
-  Impl() {}
+  Impl() { boardPresenter.setDelegate(&boardView); }
 
   void execute() {
-    // controller.newGame();
+    controller.newGame();
     while (true) {
       show();
       const auto input = controlView.getInput();
@@ -40,7 +40,7 @@ class Application::Impl {
   BoardView boardView;
   ControlView controlView;
 
-  // presenter::Controller controller;
+  presenter::Controller controller;
   presenter::BoardPresenter boardPresenter;
 
   inline static const std::unordered_map<char, common::model::Direction>

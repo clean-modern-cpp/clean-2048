@@ -3,9 +3,11 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 #include <vector>
 
 #include "presenter/BoardPresenter.h"
+#include "use_case/Model.h"
 
 namespace console_ui {
 
@@ -24,7 +26,8 @@ class BoardView : public presenter::BoardPresenterDelegate {
     board = Board(row, Row(column, emptyTile));
   }
 
-  void presentActions(common::model::Actions acts) override {
+  void present(use_case::Actions acts) override {
+    std::cout << "board view present\n";
     actions = std::move(acts);
   }
 
@@ -84,7 +87,7 @@ class BoardView : public presenter::BoardPresenterDelegate {
   using Row = std::vector<int>;
   using Board = std::vector<Row>;
 
-  common::model::Actions actions;
+  use_case::Actions actions;
   Board board;
 };
 
