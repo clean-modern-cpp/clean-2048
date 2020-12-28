@@ -31,11 +31,14 @@ class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
   void present(common::Actions actions) override {
     spdlog::info("actions: {}", actions);
     for (const auto& [from, to] : actions.moveActions) {
-      if (from != to) {
-        emit cellMoved(from.row, from.col, to.row, to.col);
-      }
+      emit cellMoveStarted(from.row, from.col, to.row, to.col);
     }
     QTimer::singleShot(100, [this, actions = std::move(actions)]() {
+      for (const auto& [from, to] : actions.moveActions) {
+        if (from != to) {
+          emit cellMoveEnded(from.row, from.col, to.row, to.col);
+        }
+      }
       for (const auto& [pos, value] : actions.newActions) {
         emit cellCreated(pos.row, pos.col, QString::number(value));
       }
@@ -54,7 +57,8 @@ class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
   void columnChanged();
 
   void cellCreated(int row, int col, QString value);
-  void cellMoved(int fromRow, int fromCol, int toRow, int toCol);
+  void cellMoveStarted(int fromRow, int fromCol, int toRow, int toCol);
+  void cellMoveEnded(int fromRow, int fromCol, int toRow, int toCol);
   void cellChanged(int row, int col, int value);
 
  private:

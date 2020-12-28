@@ -81,12 +81,15 @@ Rectangle {
             cells[row][col] = cell;
         }
 
-        onCellMoved: {
+        onCellMoveStarted: {
             var cell = cells[fromRow][fromCol];
             cell.animMoveEnable = true;
             cell.animResizeEnable = false;
             cell.x = cell.width * toCol;
             cell.y = cell.height * toRow;
+        }
+
+        onCellMoveEnded: {
             if (cells[toRow][toCol] != 0) {
                 cells[toRow][toCol].destroy();
             }
