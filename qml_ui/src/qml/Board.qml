@@ -7,10 +7,6 @@ Rectangle {
     focus: true
     radius: 3;
 
-    BoardViewModel {
-        id: boardViewModel
-    }
-
     anchors {
         left: parent.left
         right: parent.right 
@@ -51,39 +47,55 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        boardViewModel.board = board;
-        boardViewModel.restart();
-    }
-
-    Timer {
-        id: movingTimer
-        interval: 100; running: false;
-        onTriggered: {
-            onAnimEnd();
+        for (var i = 0; i < boardViewModel.rows; ++i) {
+            cells[i] = []
+            for (var j = 0; j < boardViewModel.columns; ++j) {
+                cells[i][j] = 0
+            }
         }
+        boardViewModel.restart();
     }
 
     Keys.onPressed: {
         boardViewModel.swipe(event.key);
     }
 
-    function onAnimEnd() {
-        for (var i = 0; i < boardViewModel.rows; ++i) {
-            for (var j = 0; j < boardViewModel.columns; ++j) {
-                var value = boardViewModel.numberOf(i, j);
-                if (value != 0) {
-                    create(i, j, value, false);
-                }
-            }
+    property var cells: []
+
+    BoardViewModel {
+        id: boardViewModel
+    }
+
+    Connections {
+        target: boardViewModel
+        onCellCreated: {
+            var component = Qt.createComponent("Cell.qml");
+            var cell = component.createObject(board);
+            cell.value = value;
+            cell.animMoveEnable = false;
+            cell.animResizeEnable = true;
+            cell.width = board.width / 4;
+            cell.height = board.height / 4;
+            cell.x = cell.width * col;
+            cell.y = cell.height * row;
+            cells[row][col] = cell;
         }
-        boardViewModel.rndBlock();
-        for (var i = 0; i < boardViewModel.rows; ++i) {
-            for (var j = 0; j < boardViewModel.columns; ++j) {
-                var value = boardViewModel.numberOf(i, j);
-                if (value != 0 && arrCells[i][j] == 0) {
-                    create(i, j, value, true);
-                }
+
+        onCellMoved: {
+            var cell = cells[fromRow][fromCol];
+            cell.animMoveEnable = true;
+            cell.animResizeEnable = false;
+            cell.x = cell.width * toCol;
+            cell.y = cell.height * toRow;
+            if (cells[toRow][toCol] != 0) {
+                cells[toRow][toCol].destroy();
             }
+            cells[toRow][toCol] = cells[fromRow][fromCol];
+            cells[fromRow][fromCol] = 0;
+        }
+
+        onCellChanged: {
+            cells[row][col].value = value;
         }
     }
 }
