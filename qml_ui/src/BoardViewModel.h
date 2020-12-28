@@ -33,15 +33,16 @@ class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
         row, std::vector<QQuickItem*>(col, nullptr));
   }
 
-  void present(common::Actions acts) override {
-    spdlog::info("actions: {}", acts);
-    // for (const auto& [from, to] : acts.moveActions) {
-    //   auto cell = cells[from.row][from.col];
-    //   cell->setX(cell->width() * to.col);
-    //   cell->setY(cell->height() * to.row);
-    // }
-    for (const auto& [pos, value] : acts.newActions) {
+  void present(common::Actions actions) override {
+    spdlog::info("actions: {}", actions);
+    for (const auto& [from, to] : actions.moveActions) {
+      moveCell(from, to);
+    }
+    for (const auto& [pos, value] : actions.newActions) {
       createCell(pos, value);
+    }
+    for (const auto& [pos, from, to] : actions.changeActions) {
+      changeCell(pos, to);
     }
   }
 
@@ -57,15 +58,31 @@ class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
   void createCell(common::Position pos, common::Value value) {
     QQmlEngine engine;
     QQmlComponent component(&engine, "qrc:/qml/Cell.qml");
-    const auto cell =
-        qobject_cast<QQuickItem*>(component.beginCreate(engine.rootContext()));
+    const auto cell = qobject_cast<QQuickItem*>(component.create());
     cell->setParentItem(board);
     cell->setSize({board->width() / 4, board->height() / 4});
     cell->setX(cell->width() * pos.col);
     cell->setY(cell->height() * pos.row);
-    cell->setProperty("value", value);
-    component.completeCreate();
+    cell->setProperty("value", QString::number(value));
     cells[pos.row][pos.col] = cell;
+  }
+
+  void moveCell(common::Position from, common::Position to) {
+    if (from == to) return;
+    const auto cell = cells[from.row][from.col];
+    cell->setX(cell->width() * to.col);
+    cell->setY(cell->height() * to.row);
+    cell->setProperty("animMoveEnable", true);
+    if (cells[to.row][to.col] != nullptr) {
+      delete cells[to.row][to.col];
+    }
+    cells[to.row][to.col] = cells[from.row][from.col];
+    cells[from.row][from.col] = nullptr;
+  }
+
+  void changeCell(common::Position pos, common::Value value) {
+    delete cells[pos.row][pos.col];
+    createCell(pos, value);
   }
 
   int rows = 4;
