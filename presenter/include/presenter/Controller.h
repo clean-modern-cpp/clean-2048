@@ -3,6 +3,8 @@
 
 #include <memory>
 
+#include "common/Model.h"
+
 namespace presenter {
 
 class Controller {
@@ -11,6 +13,7 @@ class Controller {
   ~Controller();
 
   void newGame();
+  void swipe(common::Direction d);
 
  private:
   class Impl;

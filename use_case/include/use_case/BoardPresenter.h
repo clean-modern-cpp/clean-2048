@@ -8,11 +8,11 @@ namespace use_case {
 
 class BoardPresenter : public common::NonCopyable {
  public:
-  virtual void initWithDimension(int row, int column) const = 0;
-  virtual void present(common::Actions actions) const = 0;
+  virtual void initWithDimension(int row, int column) = 0;
+  virtual void present(common::Actions actions) = 0;
 };
 
-void setBoardPresenter(const BoardPresenter* presenter);
+void setBoardPresenter(BoardPresenter* presenter);
 
 }  // namespace use_case
 

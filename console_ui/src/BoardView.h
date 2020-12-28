@@ -1,18 +1,52 @@
 #ifndef CLEAN2048_CONSOLEUI_BOARDVIEW_H_
 #define CLEAN2048_CONSOLEUI_BOARDVIEW_H_
 
+#include <spdlog/fmt/ostr.h>
+#include <spdlog/spdlog.h>
+
 #include <algorithm>
 #include <cassert>
-#include <iostream>
+#include <iomanip>
+#include <sstream>
 #include <vector>
 
 #include "common/Model.h"
+#include "common/ModelHelper.h"
 #include "presenter/BoardPresenter.h"
 
 namespace console_ui {
 
 class BoardView : public presenter::BoardPresenterDelegate {
  public:
+  std::string body() {
+    const std::string seperator = "---------------------------------\n";
+    std::string body;
+    do {
+      performAction();
+      for (const auto& row : board) {
+        body += seperator + "| ";
+        for (const auto value : row) {
+          std::ostringstream oss;
+          oss << std::setw(5) << value;
+          body += (value != 0 ? oss.str() : "     ") + " | ";
+        }
+        body += "\n";
+      }
+      body += seperator + "\n";
+    } while (!actions.moveActions.empty());
+    return body;
+  }
+
+  void intiWithDimension(int row, int column) override {
+    board = Board(row, Row(column, emptyTile));
+  }
+
+  void present(common::Actions acts) override {
+    spdlog::info("{}", acts);
+    actions = std::move(acts);
+  }
+
+ private:
   bool isInAnimation() {
     return std::find_if(actions.moveActions.cbegin(),
                         actions.moveActions.cend(), [](const auto& moveAction) {
@@ -20,27 +54,15 @@ class BoardView : public presenter::BoardPresenterDelegate {
                         }) != actions.moveActions.cend();
   }
 
-  std::string body();
-
-  void intiWithDimension(int row, int column) override {
-    board = Board(row, Row(column, emptyTile));
-  }
-
-  void present(common::Actions acts) override {
-    std::cout << "board view present\n";
-    actions = std::move(acts);
-  }
-
- private:
   void performAction() {
-    if (!moveTiles()) {
+    if (!moveCells()) {
       actions.moveActions.clear();
-      createTiles();
-      doubleTiles();
+      createCells();
+      doubleCells();
     }
   }
 
-  bool moveTiles() {
+  bool moveCells() {
     bool moved = false;
     for (auto& moveAction : actions.moveActions) {
       if (moveAction.from != moveAction.to) {
@@ -54,16 +76,16 @@ class BoardView : public presenter::BoardPresenterDelegate {
     return moved;
   }
 
-  void createTiles() {
-    for (auto& action : actions.newActions) {
+  void createCells() {
+    for (const auto& action : actions.newActions) {
       assert(cellAt(action.pos) == emptyTile);
       cellAt(action.pos) = action.value;
     }
     actions.newActions.clear();
   }
 
-  void doubleTiles() {
-    for (auto& action : actions.changeActions) {
+  void doubleCells() {
+    for (const auto& action : actions.changeActions) {
       assert(cellAt(action.pos) != emptyTile);
       cellAt(action.pos) *= 2;
     }

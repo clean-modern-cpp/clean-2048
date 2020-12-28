@@ -1,6 +1,9 @@
-add_library(console_ui src/Application.cpp src/BoardView.cpp)
+add_library(console_ui src/Application.cpp)
 target_include_directories(console_ui PUBLIC include)
-target_link_libraries(console_ui PRIVATE presenter use_case)
+target_link_libraries(
+  console_ui
+  PUBLIC common
+  PRIVATE spdlog presenter)
 
 add_executable(console_2048 main.cpp)
 target_link_libraries(console_2048 PRIVATE console_ui)

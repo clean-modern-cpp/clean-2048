@@ -9,7 +9,7 @@ Game<entity::Board> game;
 
 GamePlay* getGamePlay() { return &game; }
 
-void setBoardPresenter(const BoardPresenter* presenter) {
+void setBoardPresenter(BoardPresenter* presenter) {
   game.setBoardPresenter(presenter);
 }
 

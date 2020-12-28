@@ -1,34 +1,29 @@
 #ifndef CLEAN2048_PRESENTER_BOARDPRESENTER_H_
 #define CLEAN2048_PRESENTER_BOARDPRESENTER_H_
 
-#include <vector>
+#include <memory>
 
 #include "common/Model.h"
-#include "use_case/BoardPresenter.h"
+#include "common/NonCopyable.h"
 
 namespace presenter {
 
-class BoardPresenterDelegate {
+class BoardPresenterDelegate : public common::NonCopyable {
  public:
-  BoardPresenterDelegate() = default;
-  BoardPresenterDelegate(const BoardPresenterDelegate&) = delete;
-  BoardPresenterDelegate& operator=(const BoardPresenterDelegate&) = delete;
-  virtual ~BoardPresenterDelegate() = default;
-
   virtual void intiWithDimension(int rows, int columns) = 0;
   virtual void present(common::Actions actions) = 0;
 };
 
-class BoardPresenter : public use_case::BoardPresenter {
+class BoardPresenter {
  public:
+  BoardPresenter();
+  ~BoardPresenter();
+
   void setDelegate(BoardPresenterDelegate* d);
 
-  void initWithDimension(int row, int column) const override;
-
-  void present(common::Actions actions) const override;
-
  private:
-  BoardPresenterDelegate* delegate = nullptr;
+  class Impl;
+  std::unique_ptr<Impl> impl;
 };
 
 }  // namespace presenter

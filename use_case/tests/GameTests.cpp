@@ -69,8 +69,8 @@ class BoardMockup {
 
 class BoardPresenterMockup : public use_case::BoardPresenter {
  public:
-  void initWithDimension(int, int) const override {}
-  void present(common::Actions actions) const override {
+  void initWithDimension(int, int) override {}
+  void present(common::Actions actions) override {
     REQUIRE_EQ(actions, common::Actions{
                             {},
                             {

@@ -15,7 +15,7 @@ class Game : public GamePlay {
  public:
   Game() : random{std::make_unique<RandomImpl>()} {}
 
-  void setBoardPresenter(const BoardPresenter* presenter) {
+  void setBoardPresenter(BoardPresenter* presenter) {
     boardPresenter = presenter;
   }
   void setRandom(std::unique_ptr<Random> r) { random = std::move(r); }
@@ -33,7 +33,15 @@ class Game : public GamePlay {
     }
   }
 
-  void swipe(common::Direction) override {}
+  void swipe(common::Direction direction) override {
+    auto swipeAction = board.swipe(direction);
+    auto newAction = newCell();
+    if (boardPresenter) {
+      boardPresenter->present({std::move(swipeAction.moveActions),
+                               {std::move(newAction)},
+                               std::move(swipeAction.changeActions)});
+    }
+  }
 
  private:
   common::NewAction newCell() {
@@ -45,7 +53,7 @@ class Game : public GamePlay {
 
   Board board;
 
-  const BoardPresenter* boardPresenter = nullptr;
+  BoardPresenter* boardPresenter = nullptr;
 
   std::unique_ptr<Random> random;
 };

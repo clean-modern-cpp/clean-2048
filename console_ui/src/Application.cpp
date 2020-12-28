@@ -1,11 +1,11 @@
 #include "console_ui/Application.h"
 
+#include <iostream>
 #include <unordered_map>
 
 #include "BoardView.h"
 #include "ControlView.h"
 #include "ScoreView.h"
-#include "common/Model.h"
 #include "presenter/Controller.h"
 
 namespace console_ui {
@@ -23,7 +23,7 @@ class Application::Impl {
         break;
       } else if (!input.empty() &&
                  directionMap.find(input[0]) != directionMap.end()) {
-        // controller.move(directionMap.at(input[0]));
+        controller.swipe(directionMap.at(input[0]));
       }
     }
   }
