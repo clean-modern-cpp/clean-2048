@@ -53,10 +53,6 @@ ApplicationWindow {
         }
     }
 
-    Component.onCompleted: {
-        // Logic.init(board.columns, board.rows, window);
-    }
-
     Component.onDestruction: {
         scoreBoard.bestScore = Math.max(scoreBoard.bestScore, scoreBoard.score);
     }

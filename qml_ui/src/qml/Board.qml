@@ -4,7 +4,6 @@ import BoardViewModel 1.0
 Rectangle {
     id: board
 
-    property var arrGrid: []
     property var arrCells: []
     property var moving: false
 
@@ -62,8 +61,8 @@ Rectangle {
                 arrCells[i][j] = 0;
             }
         }
+        boardViewModel.board = board;
         boardViewModel.restart();
-        createCells();
     }
 
     Timer {
@@ -75,23 +74,8 @@ Rectangle {
     }
 
     Keys.onPressed: {
-        if (event.key == Qt.Key_Left) {
-            if (boardViewModel.moveLeftUp(true)) {
-                movingTimer.start();
-            }
-        } else if (event.key == Qt.Key_Right) {
-            if (boardViewModel.moveRightDown(true)) {
-                movingTimer.start();
-            }
-        } else if (event.key == Qt.Key_Up) {
-            if (boardViewModel.moveLeftUp(false)) {
-                movingTimer.start();
-            }
-        } else if (event.key == Qt.Key_Down) {
-            if (boardViewModel.moveRightDown(false)) {
-                movingTimer.start();
-            }
-        }
+        boardViewModel.swipe(event.key);
+        movingTimer.start();
         for (var i = 0; i < boardViewModel.movePositionLength(); ++i) {
             var fromRow = boardViewModel.fromRow(i);
             var fromColumn = boardViewModel.fromColumn(i);
@@ -130,6 +114,7 @@ Rectangle {
     }
 
     function create(row, col, value, respaun) {
+        console.log(row, col, value, respaun);
         var component = Qt.createComponent("Cell.qml");
         var object = component.createObject(board);
         object.value = value;
@@ -137,8 +122,7 @@ Rectangle {
         object.x = object.width * col;
         object.y = object.height * row;
         object.size = Qt.size(width / boardViewModel.rows - 10, height / boardViewModel.columns - 10);
-        // arrGrid[row][col] = object.value;
-        arrCells[row][col] = object;
+        return object;
     }
 
     function onAnimEnd() {

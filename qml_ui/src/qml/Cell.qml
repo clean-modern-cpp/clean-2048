@@ -11,19 +11,15 @@ Rectangle {
     property var fontSize: { 0: 1, 1: 45, 2: 40, 3: 35, 4: 30 }
 
     property alias value: lable.text
-    property size size: Qt.size(20,20)
     property bool animMoveEnable: false
     property bool animResizeEnable: false
 
-    width: parent.width / 4
-    height: parent.height / 4
     color: "transparent"
     
     Rectangle {
-        id: styleBtn
-
-        width: size.width
-        height: size.height
+        id: background
+        width: parent.width - 10
+        height: parent.height - 10
         color: colors[value]
         radius: 3
         anchors.centerIn: parent
@@ -54,6 +50,7 @@ Rectangle {
             }
         }
     }
+
     Behavior on x {
         enabled: animMoveEnable
         NumberAnimation {

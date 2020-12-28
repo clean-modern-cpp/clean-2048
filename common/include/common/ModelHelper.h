@@ -73,31 +73,33 @@ inline bool operator==(const Actions &lhs, const Actions &rhs) {
 
 namespace std {
 
-std::ostream &operator<<(std::ostream &os, const common::Position &position) {
+inline std::ostream &operator<<(std::ostream &os,
+                                const common::Position &position) {
   os << "{" << position.row << ", " << position.col << "}";
   return os;
 }
 
-std::ostream &operator<<(std::ostream &os,
-                         const common::MoveAction &moveAction) {
+inline std::ostream &operator<<(std::ostream &os,
+                                const common::MoveAction &moveAction) {
   os << "{" << moveAction.from << ", " << moveAction.to << "}";
   return os;
 }
 
-std::ostream &operator<<(std::ostream &os, const common::NewAction &newAction) {
+inline std::ostream &operator<<(std::ostream &os,
+                                const common::NewAction &newAction) {
   os << "{" << newAction.pos << ", " << newAction.value << "}";
   return os;
 }
 
-std::ostream &operator<<(std::ostream &os,
-                         const common::ChangeAction &changeAction) {
+inline std::ostream &operator<<(std::ostream &os,
+                                const common::ChangeAction &changeAction) {
   os << "{" << changeAction.pos << ", " << changeAction.from << ", "
      << changeAction.to << "}";
   return os;
 }
 
 template <typename T>
-std::ostream &operator<<(std::ostream &os, const std::vector<T> &set) {
+inline std::ostream &operator<<(std::ostream &os, const std::vector<T> &set) {
   os << "[";
   bool first = true;
   for (const auto &t : set) {
@@ -108,13 +110,15 @@ std::ostream &operator<<(std::ostream &os, const std::vector<T> &set) {
   return os;
 }
 
-std::ostream &operator<<(std::ostream &os, const common::SwipeAction &action) {
+inline std::ostream &operator<<(std::ostream &os,
+                                const common::SwipeAction &action) {
   os << "{\nmoveActions: " << action.moveActions
      << "changeActions: " << action.changeActions << "}";
   return os;
 }
 
-std::ostream &operator<<(std::ostream &os, const common::Actions &actions) {
+inline std::ostream &operator<<(std::ostream &os,
+                                const common::Actions &actions) {
   os << "{\nmoveActions: " << actions.moveActions
      << "newActions: " << actions.newActions
      << "changeActions: " << actions.changeActions << "}";

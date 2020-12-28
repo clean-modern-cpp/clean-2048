@@ -1,138 +1,88 @@
 #ifndef CLEAN_2048_QML_UI_BOARDVIEWMODEL_H
 #define CLEAN_2048_QML_UI_BOARDVIEWMODEL_H
 
+#include <spdlog/fmt/ostr.h>
+#include <spdlog/spdlog.h>
+
+#include <QKeyEvent>
 #include <QObject>
+#include <QQmlComponent>
+#include <QQmlEngine>
+#include <QQuickItem>
 #include <QString>
+#include <unordered_map>
 #include <vector>
 
-struct Position {
-  int row = 0;
-  int column = 0;
-};
+#include "common/ModelHelper.h"
+#include "presenter/BoardPresenter.h"
+#include "presenter/Controller.h"
 
-struct MovePosition {
-  MovePosition() {}
-  MovePosition(Position from, Position to) : from{from}, to{to} {}
-
-  Position from;
-  Position to;
-};
-
-using MovePositions = std::vector<MovePosition>;
-
-class BoardViewModel : public QObject {
+class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
   Q_OBJECT
 
   Q_PROPERTY(int rows MEMBER rows NOTIFY rowsChanged)
   Q_PROPERTY(int columns MEMBER columns NOTIFY columnChanged)
+  Q_PROPERTY(QQuickItem* board MEMBER board)
 
  public:
   explicit BoardViewModel(QObject* parent = nullptr);
 
-  Q_INVOKABLE int movePositionLength() const { return movePositions.size(); }
-  Q_INVOKABLE int fromRow(int index) const {
-    return movePositions[index].from.row;
-  }
-  Q_INVOKABLE int fromColumn(int index) const {
-    return movePositions[index].from.column;
-  }
-  Q_INVOKABLE int toRow(int index) const { return movePositions[index].to.row; }
-  Q_INVOKABLE int toColumn(int index) const {
-    return movePositions[index].to.column;
+  void intiWithDimension(int row, int col) override {
+    spdlog::info("row: {}, col: {}", row, col);
+    cells = std::vector<std::vector<QQuickItem*>>(
+        row, std::vector<QQuickItem*>(col, nullptr));
   }
 
-  Q_INVOKABLE int numberOf(int row, int column) const {
-    return numbers[row][column];
-  }
-
-  Q_INVOKABLE void restart() {
-    for (auto row : numbers) {
-      for (auto& n : row) {
-        n = 0;
-      }
-    }
-    rndBlock();
-    rndBlock();
-  }
-
-  Q_INVOKABLE void rndBlock() {
-    std::vector<Position> emptyPositions;
-    for (auto row = 0; row < rows; row++) {
-      for (auto column = 0; column < columns; column++) {
-        if (numbers[row][column] == 0) {
-          emptyPositions.push_back({row, column});
-        }
-      }
-    }
-    if (!emptyPositions.empty()) {
-      const int index = std::rand() % emptyPositions.size();
-      const int value = std::rand() < RAND_MAX * 0.5 ? 2 : 4;
-      numbers[emptyPositions[index].row][emptyPositions[index].column] = value;
-    } else {
+  void present(common::Actions acts) override {
+    spdlog::info("actions: {}", acts);
+    // for (const auto& [from, to] : acts.moveActions) {
+    //   auto cell = cells[from.row][from.col];
+    //   cell->setX(cell->width() * to.col);
+    //   cell->setY(cell->height() * to.row);
+    // }
+    for (const auto& [pos, value] : acts.newActions) {
+      createCell(pos, value);
     }
   }
 
-  Q_INVOKABLE bool moveLeftUp(bool left) {
-    movePositions.clear();
-    for (auto row = 0; row < rows; ++row) {
-      for (auto column = 0; column < columns; ++column) {
-        for (auto f = column + 1; f < rows; ++f) {
-          if (left) {
-            if (!moveObj(row, f, row, column)) break;
-          } else {
-            if (!moveObj(f, row, column, row)) break;
-          }
-        }
-      }
-    }
-    return true;
-  }
+  Q_INVOKABLE void restart() { controller.newGame(); }
 
-  Q_INVOKABLE bool moveRightDown(bool right) {
-    movePositions.clear();
-    for (auto row = 0; row < rows; ++row) {
-      for (auto column = columns - 1; column >= 0; --column) {
-        for (auto f = column - 1; f >= 0; --f) {
-          if (right) {
-            if (!moveObj(row, f, row, column)) break;
-          } else {
-            if (!moveObj(f, row, column, row)) break;
-          }
-        }
-      }
-    }
-    return true;
-  }
-
-  bool moveObj(int row, int col, int row2, int col2) {
-    const auto cell1 = numbers[row][col];
-    const auto cell2 = numbers[row2][col2];
-    if (cell1 != 0 && cell2 != 0 && cell1 != cell2) return false;
-    if ((cell1 != 0 && cell1 == cell2) || (cell1 != 0 && cell2 == 0)) {
-      numbers[row][col] = 0;
-      movePositions.emplace_back(Position{row, col}, Position{row2, col2});
-    }
-    if (cell1 != 0 && cell1 == cell2) {
-      numbers[row2][col2] *= 2;
-      return false;
-    }
-    if (cell1 != 0 && cell2 == 0) {
-      numbers[row2][col2] = cell1;
-      return true;
-    }
-    return true;
-  }
+  Q_INVOKABLE void swipe(int key) { controller.swipe(directionMap.at(key)); }
 
  signals:
   void rowsChanged();
   void columnChanged();
 
  private:
+  void createCell(common::Position pos, common::Value value) {
+    QQmlEngine engine;
+    QQmlComponent component(&engine, "qrc:/qml/Cell.qml");
+    const auto cell =
+        qobject_cast<QQuickItem*>(component.beginCreate(engine.rootContext()));
+    cell->setParentItem(board);
+    cell->setSize({board->width() / 4, board->height() / 4});
+    cell->setX(cell->width() * pos.col);
+    cell->setY(cell->height() * pos.row);
+    cell->setProperty("value", value);
+    component.completeCreate();
+    cells[pos.row][pos.col] = cell;
+  }
+
   int rows = 4;
   int columns = 4;
 
-  MovePositions movePositions;
-  std::vector<std::vector<int>> numbers;
+  QQuickItem* board;
+  std::vector<std::vector<QQuickItem*>> cells;
+
+  presenter::Controller controller;
+  presenter::BoardPresenter boardPresenter;
+
+  inline static const std::unordered_map<int, common::Direction> directionMap{
+      {Qt::Key_Left, common::Direction::left},
+      {Qt::Key_Right, common::Direction::right},
+      {Qt::Key_Up, common::Direction::up},
+      {Qt::Key_Down, common::Direction::down},
+  };
 };
 
 #endif

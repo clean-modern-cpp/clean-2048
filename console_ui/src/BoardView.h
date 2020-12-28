@@ -1,9 +1,6 @@
 #ifndef CLEAN2048_CONSOLEUI_BOARDVIEW_H_
 #define CLEAN2048_CONSOLEUI_BOARDVIEW_H_
 
-#include <spdlog/fmt/ostr.h>
-#include <spdlog/spdlog.h>
-
 #include <algorithm>
 #include <cassert>
 #include <iomanip>
@@ -41,19 +38,9 @@ class BoardView : public presenter::BoardPresenterDelegate {
     board = Board(row, Row(column, emptyTile));
   }
 
-  void present(common::Actions acts) override {
-    spdlog::info("{}", acts);
-    actions = std::move(acts);
-  }
+  void present(common::Actions acts) override { actions = std::move(acts); }
 
  private:
-  bool isInAnimation() {
-    return std::find_if(actions.moveActions.cbegin(),
-                        actions.moveActions.cend(), [](const auto& moveAction) {
-                          return moveAction.from != moveAction.to;
-                        }) != actions.moveActions.cend();
-  }
-
   void performAction() {
     if (!moveCells()) {
       actions.moveActions.clear();
