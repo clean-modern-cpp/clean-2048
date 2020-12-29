@@ -1,20 +1,12 @@
 #ifndef CLEAN2048_QWIDGETUI_BOARDVIEW_H_
 #define CLEAN2048_QWIDGETUI_BOARDVIEW_H_
 
+#include <QString>
 #include <QWidget>
+#include <vector>
 
-enum GestureDirect { LEFT = 0, RIGHT = 1, UP = 2, DOWN = 3 };
-
-enum AnimationType { MOVE = 0, APPEARANCE = 1 };
-
-struct Animation {
-  AnimationType type;
-  GestureDirect direct;
-  QPointF startPos;
-  QPointF endPos;
-  int digit;
-  int digit2;
-};
+#include "CellView.h"
+#include "qt_view_model/BoardViewModel.h"
 
 class BoardView : public QWidget {
   Q_OBJECT
@@ -22,35 +14,18 @@ class BoardView : public QWidget {
  public:
   explicit BoardView(QWidget *parent = 0);
 
- protected:
-  void keyPressEvent(QKeyEvent *event);
+ private slots:
+  void newCell(int row, int col, QString value);
+  void startCellMove(int fromRow, int fromCol, int toRow, int toCol);
+  void completeCellMove(int fromRow, int fromCol, int toRow, int toCol);
+  void changeCell(int row, int col, QString value);
 
  private:
-  int board[4][4];
-  int digitCount;
-  int score;
-  QPoint startPos;
-  QList<Animation> animationList;
-  qreal w, h;
-  QImage *cacheImg;
-  bool isAnimating;
-  bool checkGameOver();
-  bool checkWin();
-  int getBitCount(int);
-  bool playAnimation(Animation &, QPainter &);
-  void mousePressEvent(QMouseEvent *);
-  void mouseReleaseEvent(QMouseEvent *);
-  void paintEvent(QPaintEvent *);
+  void keyPressEvent(QKeyEvent *event);
 
- signals:
-  void GestureMove(GestureDirect);
-  void ScoreInc(int);
-  void GameOver();
-  void win();
+  std::vector<std::vector<CellView *>> cells;
 
- public slots:
-  void onGestureMove(GestureDirect);
-  void restart();
+  qt_view_model::BoardViewModel boardViewModel;
 };
 
 #endif

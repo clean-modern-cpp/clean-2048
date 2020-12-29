@@ -3,8 +3,6 @@ find_package(
   COMPONENTS Core Quick Widgets
   REQUIRED)
 
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 add_executable(qml_2048 src/main.cpp src/qml.qrc)

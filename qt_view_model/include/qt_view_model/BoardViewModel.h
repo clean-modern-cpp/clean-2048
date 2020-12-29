@@ -1,5 +1,5 @@
-#ifndef CLEAN_2048_QML_UI_BOARDVIEWMODEL_H
-#define CLEAN_2048_QML_UI_BOARDVIEWMODEL_H
+#ifndef CLEAN2048_QTVIEWMODEL_BOARDVIEWMODEL_H_
+#define CLEAN2048_QTVIEWMODEL_BOARDVIEWMODEL_H_
 
 #include <spdlog/fmt/ostr.h>
 #include <spdlog/spdlog.h>
@@ -15,6 +15,8 @@
 #include "presenter/BoardPresenter.h"
 #include "presenter/Controller.h"
 
+namespace qt_view_model {
+
 class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
   Q_OBJECT
 
@@ -29,21 +31,21 @@ class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
   }
 
   void present(common::Actions actions) override {
-    spdlog::info("actions: {}", actions);
+    spdlog::info("present actions: {}", actions);
     for (const auto& [from, to] : actions.moveActions) {
-      emit cellMoveStarted(from.row, from.col, to.row, to.col);
+      emit startCellMove(from.row, from.col, to.row, to.col);
     }
     QTimer::singleShot(100, [this, actions = std::move(actions)]() {
       for (const auto& [from, to] : actions.moveActions) {
         if (from != to) {
-          emit cellMoveEnded(from.row, from.col, to.row, to.col);
+          emit completeCellMove(from.row, from.col, to.row, to.col);
         }
       }
       for (const auto& [pos, value] : actions.newActions) {
-        emit cellCreated(pos.row, pos.col, QString::number(value));
+        emit newCell(pos.row, pos.col, QString::number(value));
       }
       for (const auto& [pos, from, to] : actions.changeActions) {
-        emit cellChanged(pos.row, pos.col, to);
+        emit changeCell(pos.row, pos.col, QString::number(to));
       }
     });
   }
@@ -56,10 +58,10 @@ class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
   void rowsChanged();
   void columnChanged();
 
-  void cellCreated(int row, int col, QString value);
-  void cellMoveStarted(int fromRow, int fromCol, int toRow, int toCol);
-  void cellMoveEnded(int fromRow, int fromCol, int toRow, int toCol);
-  void cellChanged(int row, int col, int value);
+  void newCell(int row, int col, QString value);
+  void startCellMove(int fromRow, int fromCol, int toRow, int toCol);
+  void completeCellMove(int fromRow, int fromCol, int toRow, int toCol);
+  void changeCell(int row, int col, QString value);
 
  private:
   int rows = 4;
@@ -75,5 +77,7 @@ class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
       {Qt::Key_Down, common::Direction::down},
   };
 };
+
+}  // namespace qt_view_model
 
 #endif

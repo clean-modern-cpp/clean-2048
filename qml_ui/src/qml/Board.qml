@@ -68,7 +68,7 @@ Rectangle {
 
     Connections {
         target: boardViewModel
-        onCellCreated: {
+        onNewCell: {
             var component = Qt.createComponent("Cell.qml");
             var cell = component.createObject(board);
             cell.value = value;
@@ -81,7 +81,7 @@ Rectangle {
             cells[row][col] = cell;
         }
 
-        onCellMoveStarted: {
+        onStartCellMove: {
             var cell = cells[fromRow][fromCol];
             cell.animMoveEnable = true;
             cell.animResizeEnable = false;
@@ -89,7 +89,7 @@ Rectangle {
             cell.y = cell.height * toRow;
         }
 
-        onCellMoveEnded: {
+        onCompleteCellMove: {
             if (cells[toRow][toCol] != 0) {
                 cells[toRow][toCol].destroy();
             }
@@ -97,7 +97,7 @@ Rectangle {
             cells[fromRow][fromCol] = 0;
         }
 
-        onCellChanged: {
+        onChangeCell: {
             cells[row][col].value = value;
         }
     }
