@@ -1,7 +1,7 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
 
-#include "BoardViewModel.h"
+#include "qt_view_model/BoardViewModel.h"
 
 int main(int argc, char *argv[]) {
   qmlRegisterType<BoardViewModel>("BoardViewModel", 1, 0, "BoardViewModel");

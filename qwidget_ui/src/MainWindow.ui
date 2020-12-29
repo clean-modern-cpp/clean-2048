@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>404</width>
     <height>559</height>
    </rect>
   </property>
@@ -38,11 +38,29 @@
       <item>
        <widget class="QWidget" name="widget_3" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="spacing">
+          <number>-1</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLabel" name="title">
            <property name="font">
             <font>
+             <family>Courier</family>
              <pointsize>40</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
             </font>
            </property>
            <property name="styleSheet">
@@ -63,7 +81,8 @@
              <widget class="QLabel" name="scoreLabel">
               <property name="font">
                <font>
-                <pointsize>15</pointsize>
+                <family>Courier</family>
+                <pointsize>18</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -81,7 +100,8 @@
              <widget class="QLabel" name="score">
               <property name="font">
                <font>
-                <pointsize>15</pointsize>
+                <family>Courier</family>
+                <pointsize>18</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -108,7 +128,8 @@
              <widget class="QLabel" name="bestLabel">
               <property name="font">
                <font>
-                <pointsize>15</pointsize>
+                <family>Courier</family>
+                <pointsize>18</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -126,7 +147,8 @@
              <widget class="QLabel" name="best">
               <property name="font">
                <font>
-                <pointsize>15</pointsize>
+                <family>Courier</family>
+                <pointsize>18</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -149,11 +171,21 @@
       <item>
        <widget class="QWidget" name="widget_4" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="spacing">
+          <number>-1</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLabel" name="tips">
            <property name="font">
             <font>
-             <pointsize>10</pointsize>
+             <family>Courier</family>
+             <pointsize>12</pointsize>
             </font>
            </property>
            <property name="styleSheet">
@@ -162,12 +194,27 @@
            <property name="text">
             <string>Join the numbers and get to the 2048 tile!</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="newGameButton">
+           <property name="font">
+            <font>
+             <family>Courier</family>
+             <pointsize>18</pointsize>
+            </font>
+           </property>
            <property name="styleSheet">
-            <string notr="true">color: white;background:#907963;border-style:flat;padding:10px</string>
+            <string notr="true">color: white;
+background:#907963;
+border-style:flat;
+padding:10px</string>
            </property>
            <property name="text">
             <string>New Game</string>
@@ -194,6 +241,171 @@
        <height>380</height>
       </size>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background: &quot;#bbada0&quot;;
+border-radius: 3px;</string>
+     </property>
+     <widget class="QWidget" name="grid" native="true">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>380</width>
+        <height>380</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>380</width>
+        <height>380</height>
+       </size>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <property name="leftMargin">
+        <number>10</number>
+       </property>
+       <property name="topMargin">
+        <number>10</number>
+       </property>
+       <property name="rightMargin">
+        <number>10</number>
+       </property>
+       <property name="bottomMargin">
+        <number>10</number>
+       </property>
+       <property name="spacing">
+        <number>10</number>
+       </property>
+       <item row="1" column="1">
+        <widget class="QWidget" name="widget_11" native="true">
+         <property name="styleSheet">
+          <string notr="true">background: &quot;#ccc0b2&quot;;
+border-radius: 3px;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QWidget" name="widget_8" native="true">
+         <property name="styleSheet">
+          <string notr="true">background: &quot;#ccc0b2&quot;;
+border-radius: 3px;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QWidget" name="widget_7" native="true">
+         <property name="styleSheet">
+          <string notr="true">background: &quot;#ccc0b2&quot;;
+border-radius: 3px;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QWidget" name="widget_13" native="true">
+         <property name="styleSheet">
+          <string notr="true">background: &quot;#ccc0b2&quot;;
+border-radius: 3px;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QWidget" name="widget_10" native="true">
+         <property name="styleSheet">
+          <string notr="true">background: &quot;#ccc0b2&quot;;
+border-radius: 3px;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QWidget" name="widget_12" native="true">
+         <property name="styleSheet">
+          <string notr="true">background: &quot;#ccc0b2&quot;;
+border-radius: 3px;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QWidget" name="widget_9" native="true">
+         <property name="styleSheet">
+          <string notr="true">background: &quot;#ccc0b2&quot;;
+border-radius: 3px;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QWidget" name="widget_17" native="true">
+         <property name="styleSheet">
+          <string notr="true">background: &quot;#ccc0b2&quot;;
+border-radius: 3px;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QWidget" name="widget_16" native="true">
+         <property name="styleSheet">
+          <string notr="true">background: &quot;#ccc0b2&quot;;
+border-radius: 3px;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QWidget" name="widget_14" native="true">
+         <property name="styleSheet">
+          <string notr="true">background: &quot;#ccc0b2&quot;;
+border-radius: 3px;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QWidget" name="widget_15" native="true">
+         <property name="styleSheet">
+          <string notr="true">background: &quot;#ccc0b2&quot;;
+border-radius: 3px;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QWidget" name="widget" native="true">
+         <property name="styleSheet">
+          <string notr="true">background: &quot;#ccc0b2&quot;;
+border-radius: 3px;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QWidget" name="widget_18" native="true">
+         <property name="styleSheet">
+          <string notr="true">background: &quot;#ccc0b2&quot;;
+border-radius: 3px;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QWidget" name="widget_19" native="true">
+         <property name="styleSheet">
+          <string notr="true">background: &quot;#ccc0b2&quot;;
+border-radius: 3px;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <widget class="QWidget" name="widget_20" native="true">
+         <property name="styleSheet">
+          <string notr="true">background: &quot;#ccc0b2&quot;;
+border-radius: 3px;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QWidget" name="widget_21" native="true">
+         <property name="styleSheet">
+          <string notr="true">background: &quot;#ccc0b2&quot;;
+border-radius: 3px;</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
