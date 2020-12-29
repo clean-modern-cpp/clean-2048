@@ -127,8 +127,10 @@ class Board::Impl {
           action.moveActions.emplace_back(positionOf(src), positionOf(dest));
         } else if (values[dest] != values[src]) {
           dest = next(dest, dt);
-          std::swap(values[dest], values[src]);
-          action.moveActions.emplace_back(positionOf(src), positionOf(dest));
+          if (dest != src) {
+            std::swap(values[dest], values[src]);
+            action.moveActions.emplace_back(positionOf(src), positionOf(dest));
+          }
         } else {
           const auto from = values[dest];
           values[dest] = from * 2;

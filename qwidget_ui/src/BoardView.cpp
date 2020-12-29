@@ -26,12 +26,20 @@ void BoardView::keyPressEvent(QKeyEvent *event) {
   QWidget::keyPressEvent(event);
 }
 
-void BoardView::newCell(int row, int col, QString) {
+void BoardView::newCell(int row, int col, QString value) {
   auto cell = new CellView(this);
   cell->resize(width() / 4, height() / 4);
-  cell->move(cell->width() * col, cell->height() * row);
+  cell->setText(value);
   cell->show();
   cells[row][col] = cell;
+  auto animation = new QPropertyAnimation{cell, "geometry"};
+  animation->setDuration(100);
+  animation->setStartValue(QRect{cell->width() * col + cell->width() / 2,
+                                 cell->height() * row + cell->height() / 2, 0,
+                                 0});
+  animation->setEndValue(QRect{cell->width() * col, cell->height() * row,
+                               cell->width(), cell->height()});
+  animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 void BoardView::startCellMove(int fromRow, int fromCol, int toRow, int toCol) {
@@ -42,7 +50,7 @@ void BoardView::startCellMove(int fromRow, int fromCol, int toRow, int toCol) {
   animation->setStartValue(
       QPoint{cell->width() * fromCol, cell->height() * fromRow});
   animation->setEndValue(QPoint{cell->width() * toCol, cell->height() * toRow});
-  animation->start();
+  animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 void BoardView::completeCellMove(int fromRow, int fromCol, int toRow,
@@ -57,6 +65,6 @@ void BoardView::completeCellMove(int fromRow, int fromCol, int toRow,
 void BoardView::changeCell(int row, int col, QString value) {
   auto cell = cells[row][col];
   Q_ASSERT(cell != nullptr);
-  cell->setValue(value);
+  cell->setText(value);
   cell->update();
 }

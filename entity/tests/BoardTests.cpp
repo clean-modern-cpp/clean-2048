@@ -510,3 +510,16 @@ TEST_CASE("Move multi-line cells down and merge") {
   };
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
 }
+
+/*
+ *  0 0 0 0   left   0 0 0 0
+ *  4 2 0 0          4 2 0 0
+ *  0 0 0 0          0 0 0 0
+ *  0 0 0 0          0 0 0 0
+ */
+TEST_CASE("Can not move") {
+  entity::Board board;
+  board.addCell({1, 0}, 4);
+  board.addCell({1, 1}, 2);
+  REQUIRE_EQ(board.swipe(common::Direction::left), common::SwipeAction{});
+}

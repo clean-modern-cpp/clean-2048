@@ -35,10 +35,12 @@ class Game : public GamePlay {
 
   void swipe(common::Direction direction) override {
     auto swipeAction = board.swipe(direction);
-    auto newAction = newCell();
+    auto newActions = swipeAction.moveActions.empty()
+                          ? common::NewActions{}
+                          : common::NewActions{newCell()};
     if (boardPresenter) {
       boardPresenter->present({std::move(swipeAction.moveActions),
-                               {std::move(newAction)},
+                               std::move(newActions),
                                std::move(swipeAction.changeActions)});
     }
   }

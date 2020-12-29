@@ -14,7 +14,7 @@ class CellView : public QWidget {
   explicit CellView(QWidget *parent = nullptr);
   ~CellView();
 
-  void setValue(const QString &value);
+  void setText(const QString &value);
 
  private:
   Ui::CellView *ui;

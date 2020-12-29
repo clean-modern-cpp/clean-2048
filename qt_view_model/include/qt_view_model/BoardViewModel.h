@@ -33,13 +33,12 @@ class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
   void present(common::Actions actions) override {
     spdlog::info("present actions: {}", actions);
     for (const auto& [from, to] : actions.moveActions) {
+      Q_ASSERT(from != to);
       emit startCellMove(from.row, from.col, to.row, to.col);
     }
     QTimer::singleShot(100, [this, actions = std::move(actions)]() {
       for (const auto& [from, to] : actions.moveActions) {
-        if (from != to) {
-          emit completeCellMove(from.row, from.col, to.row, to.col);
-        }
+        emit completeCellMove(from.row, from.col, to.row, to.col);
       }
       for (const auto& [pos, value] : actions.newActions) {
         emit newCell(pos.row, pos.col, QString::number(value));
@@ -76,7 +75,7 @@ class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
       {Qt::Key_Up, common::Direction::up},
       {Qt::Key_Down, common::Direction::down},
   };
-};
+};  // namespace qt_view_model
 
 }  // namespace qt_view_model
 
