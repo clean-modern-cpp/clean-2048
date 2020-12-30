@@ -21,17 +21,18 @@ class ScoreViewModel : public QObject, presenter::ScorePresenterDelegate {
   void present(int s, int bs) override {
     spdlog::info("present score: {}, {}", score, bestScore);
     score = s;
+    emit scoreChanged(score);
     bestScore = bs;
-    emit scoreChanged();
-    emit bestScoreChanged();
+    emit bestScoreChanged(bestScore);
   }
 
  signals:
-  void scoreChanged();
-  void bestScoreChanged();
+  void scoreChanged(int score);
+  void bestScoreChanged(int bestScore);
 
  private:
   presenter::ScorePresenter scorePresenter;
+
   int score = 0;
   int bestScore = 0;
 };

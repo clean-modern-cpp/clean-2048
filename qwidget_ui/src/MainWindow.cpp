@@ -11,15 +11,21 @@ MainWindow::MainWindow(QWidget *parent)
   ui->setupUi(this);
   ui->boardView->setFocus();
 
-  highScore = 0;
-  QFile file("score.j");
-  if (file.open(QIODevice::ReadOnly)) {
-    file.read((char *)&highScore, sizeof(highScore));
-    file.close();
-  }
+  connect(&scoreViewModel, SIGNAL(scoreChanged(int)), this,
+          SLOT(scoreChanged(int)));
+  connect(&scoreViewModel, SIGNAL(bestScoreChanged(int)), this,
+          SLOT(bestScoreChanged(int)));
 }
 
 MainWindow::~MainWindow() { delete ui; }
+
+void MainWindow::scoreChanged(int score) {
+  ui->score->setText(QString::number(score));
+}
+
+void MainWindow::bestScoreChanged(int bestScore) {
+  ui->bestScore->setText(QString::number(bestScore));
+}
 
 void MainWindow::onScoreInc(int) {}
 

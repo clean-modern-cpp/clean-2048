@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include "qt_view_model/ScoreViewModel.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -14,15 +16,19 @@ class MainWindow : public QWidget {
   MainWindow(QWidget *parent = 0);
   ~MainWindow();
 
- private:
-  int highScore;
-  Ui::MainWindow *ui;
+ private slots:
+  void scoreChanged(int score);
+  void bestScoreChanged(int bestScore);
 
+ private:
   void keyPressEvent(QKeyEvent *event);
 
   void onScoreInc(int);
   void onGameOver();
   void onWin();
+
+  Ui::MainWindow *ui;
+  qt_view_model::ScoreViewModel scoreViewModel;
 };
 
 #endif
