@@ -4,21 +4,25 @@
 #include <unordered_map>
 
 #include "BoardView.h"
-#include "ControlView.h"
 #include "ScoreView.h"
+#include "presenter/BoardPresenter.h"
 #include "presenter/Controller.h"
+#include "presenter/ScorePresenter.h"
 
 namespace console_ui {
 
 class Application::Impl {
  public:
-  Impl() { boardPresenter.setDelegate(&boardView); }
+  Impl() {
+    boardPresenter.setDelegate(&boardView);
+    scorePresenter.setDelegate(&scoreView);
+  }
 
   void execute() {
     controller.newGame();
     while (true) {
       show();
-      const auto input = controlView.getInput();
+      const auto input = getInput();
       if (input == "q") {
         break;
       } else if (!input.empty() &&
@@ -30,18 +34,27 @@ class Application::Impl {
 
  private:
   void show() {
-    scoreView.show();
+    std::cout << scoreView.body();
     std::cout << boardView.body();
-    controlView.show();
+
+    std::cout << "Please input:\n";
+    std::cout << "  - l: Left, r: Right, u: up, d: Down\n";
+    std::cout << "  - q: Quit\n";
     std::cout << std::endl;
+  }
+
+  std::string getInput() {
+    std::string input;
+    std::getline(std::cin, input);
+    return input;
   }
 
   ScoreView scoreView;
   BoardView boardView;
-  ControlView controlView;
 
   presenter::Controller controller;
   presenter::BoardPresenter boardPresenter;
+  presenter::ScorePresenter scorePresenter;
 
   inline static const std::unordered_map<char, common::Direction> directionMap{
       {'l', common::Direction::left},

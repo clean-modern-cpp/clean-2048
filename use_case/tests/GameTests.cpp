@@ -31,12 +31,11 @@ class BoardMockup {
   bool isGameOver() const { return false; }
   common::Positions emptyPositions() const {
     oss << "Board::emptyPositions()";
-    static bool first = true;
     auto positions =
-        first
+        firstEmptyPositionsCall
             ? common::Positions{{0, 0}, {0, 1}, {1, 0}, {1, 1}, {2, 0}, {2, 1}}
             : common::Positions{{0, 0}, {0, 1}, {1, 1}, {2, 0}, {2, 1}};
-    first = false;
+    firstEmptyPositionsCall = false;
     oss << " -> " << positions;
     return positions;
   }
@@ -55,6 +54,9 @@ class BoardMockup {
         },
     };
   }
+
+ private:
+  mutable bool firstEmptyPositionsCall = true;
 };
 
 class ScoreMockup {
@@ -134,16 +136,16 @@ TEST_CASE("Swipe") {
   game.setRandom(std::make_unique<RandomMockup>());
   game.swipe(common::Direction::left);
   REQUIRE_EQ(oss.str(), R"(Board::swipe()
-Board::emptyPositions() -> [{0, 0}, {0, 1}, {1, 1}, {2, 0}, {2, 1}]
-Random::next(0, 4) -> 2
+Board::emptyPositions() -> [{0, 0}, {0, 1}, {1, 0}, {1, 1}, {2, 0}, {2, 1}]
+Random::next(0, 5) -> 2
 Random::next(1, 10) -> 5
-Board::addCell({1, 1}, 2})
+Board::addCell({1, 0}, 2})
 Score::update()
 BoardPresenter::present({
   isGameOver: 0
   moveActions: [{{0, 0}, {1, 1}}]
   mergeActions: [{{2, 2}, 8}]
-  newActions: [{{1, 1}, 2}]
+  newActions: [{{1, 0}, 2}]
 })
 Score::getScore()
 Score::getBestScore()
