@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import ScoreViewModel 1.0
 
 Rectangle {
     id: scoreBoard
@@ -10,6 +11,10 @@ Rectangle {
     property int bestScore: 0
 
     signal optionsClicked;
+
+    ScoreViewModel {
+        id: scoreViewModel
+    }
 
     Text {
         id: name
@@ -48,7 +53,7 @@ Rectangle {
             id: text
             x: 38
             color: "#ffffff"
-            text: score
+            text: scoreViewModel.score
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: 21
@@ -84,7 +89,7 @@ Rectangle {
             id: bestScoreText
             x: 38
             color: "#ffffff"
-            text: bestScore
+            text: scoreViewModel.bestScore
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: 21
@@ -101,8 +106,6 @@ Rectangle {
         label: qsTr("New Game")
 
         onClicked: {
-            bestScore = Math.max(bestScore, score);
-            Logic.restart();
         }
     }
 

@@ -20,10 +20,10 @@ namespace qt_view_model {
 class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
   Q_OBJECT
 
+ public:
   Q_PROPERTY(int rows MEMBER rows NOTIFY rowsChanged)
   Q_PROPERTY(int columns MEMBER columns NOTIFY columnChanged)
 
- public:
   explicit BoardViewModel(QObject* parent = nullptr);
 
   void intiWithDimension(int row, int col) override {

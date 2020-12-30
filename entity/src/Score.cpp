@@ -10,11 +10,11 @@ class Score::Impl {
   int getBestScore() const { return bestScore; }
 
   void update(const common::SwipeAction& action) {
-    score = std::accumulate(action.mergeActions.cbegin(),
-                            action.mergeActions.cend(), 0,
-                            [](int sum, const auto& mergeAction) {
-                              return sum + mergeAction.toValue;
-                            });
+    score += std::accumulate(action.mergeActions.cbegin(),
+                             action.mergeActions.cend(), 0,
+                             [](int sum, const auto& mergeAction) {
+                               return sum + mergeAction.toValue;
+                             });
     bestScore = std::max(bestScore, score);
   }
 
