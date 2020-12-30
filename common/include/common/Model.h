@@ -40,6 +40,19 @@ inline bool operator==(const MoveAction& lhs, const MoveAction& rhs) {
 
 using MoveActions = std::vector<MoveAction>;
 
+struct MergeAction {
+  Position pos;
+  Value toValue;
+
+  MergeAction(Position pos, Value toValue) : pos{pos}, toValue{toValue} {}
+};
+
+inline bool operator==(const MergeAction& lhs, const MergeAction& rhs) {
+  return lhs.pos == rhs.pos && lhs.toValue == rhs.toValue;
+}
+
+using MergeActions = std::vector<MergeAction>;
+
 struct NewAction {
   Position pos;
   Value value;
@@ -53,30 +66,15 @@ inline bool operator==(const NewAction& lhs, const NewAction& rhs) {
 
 using NewActions = std::vector<NewAction>;
 
-struct ChangeAction {
-  Position pos;
-  Value from;
-  Value to;
-
-  ChangeAction(Position pos, Value from, Value to)
-      : pos{pos}, from{from}, to{to} {}
-};
-
-inline bool operator==(const ChangeAction& lhs, const ChangeAction& rhs) {
-  return lhs.pos == rhs.pos && lhs.from == rhs.from && lhs.to == rhs.to;
-}
-
-using ChangeActions = std::vector<ChangeAction>;
-
 struct SwipeAction {
   MoveActions moveActions;
-  ChangeActions changeActions;
+  MergeActions mergeActions;
 };
 
 struct Actions {
   MoveActions moveActions;
   NewActions newActions;
-  ChangeActions changeActions;
+  MergeActions mergeActions;
 };
 
 }  // namespace common

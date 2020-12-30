@@ -22,51 +22,45 @@ inline bool operator==(const Positions &lhs, const Positions &rhs) {
 }
 
 struct HashMoveAction {
-  std::size_t operator()(const MoveAction &moveAction) const {
-    return HashPosition{}(moveAction.from) ^
-           (HashPosition{}(moveAction.to) < 1);
+  std::size_t operator()(const MoveAction &action) const {
+    return HashPosition{}(action.from) ^ (HashPosition{}(action.to) < 1);
   }
 };
 
 using MoveActionSet = std::unordered_set<MoveAction, HashMoveAction>;
 
+struct HashMergeAction {
+  std::size_t operator()(const MergeAction &action) const {
+    return HashPosition{}(action.pos) ^
+           (std::hash<Value>{}(action.toValue) < 1);
+  }
+};
+
+using MergeActionSet = std::unordered_set<MergeAction, HashMergeAction>;
+
 struct HashNewAction {
-  std::size_t operator()(const NewAction &newAction) const {
-    return HashPosition{}(newAction.pos) ^
-           (std::hash<Value>{}(newAction.value) < 1);
+  std::size_t operator()(const NewAction &action) const {
+    return HashPosition{}(action.pos) ^ (std::hash<Value>{}(action.value) < 1);
   }
 };
 
 using NewActionSet = std::unordered_set<NewAction, HashNewAction>;
 
-struct HashChangeAction {
-  std::size_t operator()(const ChangeAction &changeAction) const {
-    return HashPosition{}(changeAction.pos) ^
-           (std::hash<Value>{}(changeAction.from) < 1) ^
-           (std::hash<Value>{}(changeAction.to) < 2);
-  }
-};
-
-using ChangeActionSet = std::unordered_set<ChangeAction, HashChangeAction>;
-
 inline bool operator==(const SwipeAction &lhs, const SwipeAction &rhs) {
   return MoveActionSet{lhs.moveActions.cbegin(), lhs.moveActions.cend()} ==
              MoveActionSet{rhs.moveActions.cbegin(), rhs.moveActions.cend()} &&
-         ChangeActionSet{lhs.changeActions.cbegin(),
-                         lhs.changeActions.cend()} ==
-             ChangeActionSet{rhs.changeActions.cbegin(),
-                             rhs.changeActions.cend()};
+         MergeActionSet{lhs.mergeActions.cbegin(), lhs.mergeActions.cend()} ==
+             MergeActionSet{rhs.mergeActions.cbegin(), rhs.mergeActions.cend()};
 }
 
 inline bool operator==(const Actions &lhs, const Actions &rhs) {
   return MoveActionSet{lhs.moveActions.cbegin(), lhs.moveActions.cend()} ==
              MoveActionSet{rhs.moveActions.cbegin(), rhs.moveActions.cend()} &&
+         MergeActionSet{lhs.mergeActions.cbegin(), lhs.mergeActions.cend()} ==
+             MergeActionSet{rhs.mergeActions.cbegin(),
+                            rhs.mergeActions.cend()} &&
          NewActionSet{lhs.newActions.cbegin(), lhs.newActions.cend()} ==
-             NewActionSet{rhs.newActions.cbegin(), rhs.newActions.cend()} &&
-         ChangeActionSet{lhs.changeActions.cbegin(),
-                         lhs.changeActions.cend()} ==
-             ChangeActionSet{rhs.changeActions.cbegin(),
-                             rhs.changeActions.cend()};
+             NewActionSet{rhs.newActions.cbegin(), rhs.newActions.cend()};
 }
 
 }  // namespace common
@@ -80,21 +74,20 @@ inline std::ostream &operator<<(std::ostream &os,
 }
 
 inline std::ostream &operator<<(std::ostream &os,
-                                const common::MoveAction &moveAction) {
-  os << "{" << moveAction.from << ", " << moveAction.to << "}";
+                                const common::MoveAction &action) {
+  os << "{" << action.from << ", " << action.to << "}";
   return os;
 }
 
 inline std::ostream &operator<<(std::ostream &os,
-                                const common::NewAction &newAction) {
-  os << "{" << newAction.pos << ", " << newAction.value << "}";
+                                const common::MergeAction &action) {
+  os << "{" << action.pos << ", " << action.toValue << "}";
   return os;
 }
 
 inline std::ostream &operator<<(std::ostream &os,
-                                const common::ChangeAction &changeAction) {
-  os << "{" << changeAction.pos << ", " << changeAction.from << ", "
-     << changeAction.to << "}";
+                                const common::NewAction &action) {
+  os << "{" << action.pos << ", " << action.value << "}";
   return os;
 }
 
@@ -113,15 +106,15 @@ inline std::ostream &operator<<(std::ostream &os, const std::vector<T> &set) {
 inline std::ostream &operator<<(std::ostream &os,
                                 const common::SwipeAction &action) {
   os << "{\nmoveActions: " << action.moveActions
-     << "changeActions: " << action.changeActions << "}";
+     << "mergeActions: " << action.mergeActions << "}";
   return os;
 }
 
 inline std::ostream &operator<<(std::ostream &os,
                                 const common::Actions &actions) {
   os << "{\nmoveActions: " << actions.moveActions
-     << "newActions: " << actions.newActions
-     << "changeActions: " << actions.changeActions << "}";
+     << "mergeActions: " << actions.mergeActions
+     << "newActions: " << actions.newActions << "}";
   return os;
 }
 
