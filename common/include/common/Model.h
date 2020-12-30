@@ -72,9 +72,10 @@ struct SwipeAction {
 };
 
 struct Actions {
+  bool isGameOver;
   MoveActions moveActions;
-  NewActions newActions;
   MergeActions mergeActions;
+  NewActions newActions;
 };
 
 }  // namespace common

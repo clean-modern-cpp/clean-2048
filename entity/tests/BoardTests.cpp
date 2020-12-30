@@ -7,7 +7,7 @@
 #include "common/ModelHelper.h"
 #include "entity/Board.h"
 
-inline common::Positions allPositionsOf(const entity::Board &board) {
+inline common::Positions allPositionsOf(const entity::Board& board) {
   common::Positions positions;
   std::generate_n(std::back_inserter(positions),
                   board.getRows() * board.getCols(),
@@ -32,23 +32,26 @@ entity::Board defaultBoard() {
   return entity::Board{rows, cols};
 }
 
+struct Cell {
+  common::Position pos;
+  common::Value value;
+};
+
 /*
  *  4 4 4 4
  *  4 4 4 0
  *  0 2 2 2
  *  0 2 2 0
  */
-inline void addCells(entity::Board &board) {
-  struct Cell {
-    common::Position pos;
-    common::Value value;
-  };
-  const std::vector<Cell> cells{
-      {{0, 0}, 4}, {{0, 1}, 4}, {{0, 2}, 4}, {{0, 3}, 4},
-      {{1, 0}, 4}, {{1, 1}, 4}, {{1, 2}, 4}, {{2, 1}, 2},
-      {{2, 2}, 2}, {{2, 3}, 2}, {{3, 1}, 2}, {{3, 2}, 2},
-  };
-  for (const auto &cell : cells) {
+const std::vector<Cell> defaultCells{
+    {{0, 0}, 4}, {{0, 1}, 4}, {{0, 2}, 4}, {{0, 3}, 4},
+    {{1, 0}, 4}, {{1, 1}, 4}, {{1, 2}, 4}, {{2, 1}, 2},
+    {{2, 2}, 2}, {{2, 3}, 2}, {{3, 1}, 2}, {{3, 2}, 2},
+};
+
+inline void addCells(entity::Board& board,
+                     const std::vector<Cell> cells = defaultCells) {
+  for (const auto& cell : cells) {
     board.addCell(cell.pos, cell.value);
   }
 }
@@ -572,4 +575,32 @@ TEST_CASE("Board of 4 rows and 5 cols") {
       {2, 1}, {2, 2}, {3, 0}, {3, 1}, {3, 2}, {3, 3},
   };
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+}
+
+/*
+ *  4 8 2
+ *  8 2 4
+ *  2 4 4
+ */
+TEST_CASE("Not game over") {
+  entity::Board board(3, 3);
+  const std::vector<Cell> cells{{{0, 0}, 4}, {{0, 1}, 8}, {{0, 2}, 2},
+                                {{1, 0}, 8}, {{1, 1}, 2}, {{1, 2}, 4},
+                                {{2, 0}, 2}, {{2, 1}, 4}, {{2, 2}, 4}};
+  addCells(board, cells);
+  REQUIRE_EQ(board.isGameOver(), false);
+}
+
+/*
+ *  4 8 2
+ *  8 2 4
+ *  2 4 8
+ */
+TEST_CASE("Game over") {
+  entity::Board board(3, 3);
+  const std::vector<Cell> cells{{{0, 0}, 4}, {{0, 1}, 8}, {{0, 2}, 2},
+                                {{1, 0}, 8}, {{1, 1}, 2}, {{1, 2}, 4},
+                                {{2, 0}, 2}, {{2, 1}, 4}, {{2, 2}, 8}};
+  addCells(board, cells);
+  REQUIRE_EQ(board.isGameOver(), true);
 }

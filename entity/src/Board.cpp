@@ -17,6 +17,16 @@ class Board::Impl {
 
   void clear() { matrix = std::vector<common::Value>(rows * cols, empty); }
 
+  bool isGameOver() const {
+    for (auto index = 0; index < rows * cols; ++index) {
+      if (matrix[index] == empty || isSameAsRight(index) ||
+          isSameAsBottom(index)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   common::Positions emptyPositions() const {
     common::Positions positions;
     for (auto index = 0; index < totalSizeOfMatrix(); ++index) {
@@ -74,6 +84,13 @@ class Board::Impl {
     return {index / cols, index % cols};
   }
 
+  bool isSameAsRight(common::Index index) const {
+    return index < rows * cols - 1 && matrix[index] == matrix[index + 1];
+  }
+  bool isSameAsBottom(common::Index index) const {
+    return index < rows * cols - cols && matrix[index] == matrix[index + cols];
+  }
+
   template <typename IsInLineFunc>
   void moveLine(common::SwipeAction& action, common::Index begin,
                 common::Index offset, IsInLineFunc isInLine) {
@@ -123,6 +140,7 @@ common::Index Board::getCols() const { return impl->getCols(); }
 
 void Board::clear() { impl->clear(); }
 
+bool Board::isGameOver() const { return impl->isGameOver(); }
 common::Positions Board::emptyPositions() const {
   return impl->emptyPositions();
 }

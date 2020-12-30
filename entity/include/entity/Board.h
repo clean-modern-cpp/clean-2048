@@ -17,6 +17,7 @@ class Board {
 
   void clear();
 
+  bool isGameOver() const;
   common::Positions emptyPositions() const;
 
   common::NewAction addCell(common::Position pos, common::Value value);
