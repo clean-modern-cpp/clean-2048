@@ -1,5 +1,4 @@
 import QtQuick 2.0
-import "logic.js" as Logic
 
 Rectangle {
     id: gameOverRect

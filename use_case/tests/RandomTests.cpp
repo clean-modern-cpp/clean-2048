@@ -5,18 +5,19 @@
 #include "RandomImpl.h"
 
 TEST_CASE("Next random") {
+  constexpr int numberCount = 10;
   constexpr int min = 1;
-  constexpr int max = 10;
+  constexpr int max = min + numberCount - 1;
   constexpr int randomCount = 100000;
-  std::unordered_map<int, int> counts;
   use_case::RandomImpl random;
+
+  std::unordered_map<int, int> counts;
   for (int i = 0; i < randomCount; ++i) {
-    auto result = random.next(min, max);
-    counts[result]++;
+    counts[random.next(min, max)]++;
   }
-  REQUIRE_EQ(counts.size(), max - min + 1);
+  REQUIRE_EQ(counts.size(), numberCount);
   for (const auto& [key, value] : counts) {
-    CHECK(std::abs(value - randomCount / (max - min + 1)) <
-          randomCount / (max - min + 1) / 10);
+    REQUIRE((key >= min && key <= max));
+    CHECK(std::abs(value - randomCount / numberCount) < 500);
   }
 }

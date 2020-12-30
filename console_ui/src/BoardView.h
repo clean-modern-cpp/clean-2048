@@ -44,8 +44,8 @@ class BoardView : public presenter::BoardPresenterDelegate {
   void performAction() {
     if (!moveCells()) {
       actions.moveActions.clear();
-      createCells();
-      doubleCells();
+      newCells();
+      mergeCells();
     }
   }
 
@@ -63,7 +63,7 @@ class BoardView : public presenter::BoardPresenterDelegate {
     return moved;
   }
 
-  void createCells() {
+  void newCells() {
     for (const auto& action : actions.newActions) {
       assert(cellAt(action.pos) == emptyTile);
       cellAt(action.pos) = action.value;
@@ -71,10 +71,10 @@ class BoardView : public presenter::BoardPresenterDelegate {
     actions.newActions.clear();
   }
 
-  void doubleCells() {
-    for (const auto& action : actions.changeActions) {
+  void mergeCells() {
+    for (const auto& action : actions.mergeActions) {
       assert(cellAt(action.pos) != emptyTile);
-      cellAt(action.pos) *= 2;
+      cellAt(action.pos) = action.toValue;
     }
   }
 

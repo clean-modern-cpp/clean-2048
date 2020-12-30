@@ -40,11 +40,11 @@ class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
       for (const auto& [from, to] : actions.moveActions) {
         emit completeCellMove(from.row, from.col, to.row, to.col);
       }
+      for (const auto& [pos, toValue] : actions.mergeActions) {
+        emit changeCell(pos.row, pos.col, QString::number(toValue));
+      }
       for (const auto& [pos, value] : actions.newActions) {
         emit newCell(pos.row, pos.col, QString::number(value));
-      }
-      for (const auto& [pos, from, to] : actions.changeActions) {
-        emit changeCell(pos.row, pos.col, QString::number(to));
       }
     });
   }

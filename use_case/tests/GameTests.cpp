@@ -90,7 +90,9 @@ class ScorePresenterMockup : public use_case::ScorePresenter {
 };
 
 /*
- * Call Random next(1, 10) for new cell value (1/10: 4, 9/10: 2)
+ * Random of new cell:
+ *   - Call Random next(0, n) for index of emptyPositions
+ *   - Call Random next(1, 10) for new cell value (1/10: 4, 9/10: 2)
  */
 TEST_CASE("New game") {
   use_case::Game<BoardMockup, ScoreMockup> game;

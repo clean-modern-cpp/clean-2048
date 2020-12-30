@@ -25,12 +25,13 @@ TEST_CASE("Body of new actions") {
   console_ui::BoardView boardView;
   boardView.intiWithDimension(4, 4);
   common::Actions newActions{
+      false,
+      {},
       {},
       {
           {{1, 1}, 2},
           {{2, 2}, 4},
       },
-      {},
   };
   boardView.present(newActions);
   REQUIRE_EQ(boardView.body(), R"(---------------------------------

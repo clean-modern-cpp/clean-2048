@@ -7,6 +7,5 @@
         <file>qml/main.qml</file>
         <file>qml/OptionsWnd.qml</file>
         <file>qml/ScoreBoard.qml</file>
-        <file>qml/logic.js</file>
     </qresource>
 </RCC>
