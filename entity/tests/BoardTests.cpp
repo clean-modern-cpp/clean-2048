@@ -579,6 +579,20 @@ TEST_CASE("Board of 4 rows and 5 cols") {
 
 /*
  *  4 8 2
+ *  8 0 4
+ *  2 4 8
+ */
+TEST_CASE("Not game over") {
+  entity::Board board(3, 3);
+  const std::vector<Cell> cells{{{0, 0}, 4}, {{0, 1}, 8}, {{0, 2}, 2},
+                                {{1, 0}, 8}, {{1, 1}, 0}, {{1, 2}, 4},
+                                {{2, 0}, 2}, {{2, 1}, 4}, {{2, 2}, 8}};
+  addCells(board, cells);
+  REQUIRE_EQ(board.isGameOver(), false);
+}
+
+/*
+ *  4 8 2
  *  8 2 4
  *  2 4 4
  */

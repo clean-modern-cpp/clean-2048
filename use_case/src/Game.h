@@ -7,16 +7,23 @@
 #include "common/Model.h"
 #include "use_case/BoardPresenter.h"
 #include "use_case/GamePlay.h"
+#include "use_case/ScorePresenter.h"
 
 namespace use_case {
 
-template <typename Board>
+constexpr common::Index rows = 4;
+constexpr common::Index cols = 4;
+
+template <typename Board, typename Score>
 class Game : public GamePlay {
  public:
-  Game() : random{std::make_unique<RandomImpl>()} {}
+  Game() : board{rows, cols}, random{std::make_unique<RandomImpl>()} {}
 
   void setBoardPresenter(BoardPresenter* presenter) {
     boardPresenter = presenter;
+  }
+  void setScorePresenter(ScorePresenter* presenter) {
+    scorePresenter = presenter;
   }
   void setRandom(std::unique_ptr<Random> r) { random = std::move(r); }
 
@@ -28,9 +35,7 @@ class Game : public GamePlay {
     common::Actions actions;
     actions.newActions.push_back(newCell());
     actions.newActions.push_back(newCell());
-    if (boardPresenter) {
-      boardPresenter->present(actions);
-    }
+    presentAll(actions);
   }
 
   void swipe(common::Direction direction) override {
@@ -38,11 +43,9 @@ class Game : public GamePlay {
     auto newActions = swipeAction.moveActions.empty()
                           ? common::NewActions{}
                           : common::NewActions{newCell()};
-    if (boardPresenter) {
-      boardPresenter->present({std::move(swipeAction.moveActions),
-                               std::move(newActions),
-                               std::move(swipeAction.changeActions)});
-    }
+    score.update(swipeAction);
+    presentAll({board.isGameOver(), std::move(swipeAction.moveActions),
+                std::move(swipeAction.mergeActions), std::move(newActions)});
   }
 
  private:
@@ -53,9 +56,20 @@ class Game : public GamePlay {
     return board.addCell(pos, value);
   }
 
+  void presentAll(common::Actions actions) {
+    if (boardPresenter) {
+      boardPresenter->present(std::move(actions));
+    }
+    if (scorePresenter) {
+      scorePresenter->present(score.getScore(), score.getBestScore());
+    }
+  }
+
   Board board;
+  Score score;
 
   BoardPresenter* boardPresenter = nullptr;
+  ScorePresenter* scorePresenter = nullptr;
 
   std::unique_ptr<Random> random;
 };

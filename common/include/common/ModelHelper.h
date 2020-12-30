@@ -105,17 +105,17 @@ inline std::ostream &operator<<(std::ostream &os, const std::vector<T> &set) {
 
 inline std::ostream &operator<<(std::ostream &os,
                                 const common::SwipeAction &action) {
-  os << "{\nmoveActions: " << action.moveActions
-     << "mergeActions: " << action.mergeActions << "}";
+  os << "{\n  moveActions: " << action.moveActions
+     << "  mergeActions: " << action.mergeActions << "}";
   return os;
 }
 
 inline std::ostream &operator<<(std::ostream &os,
                                 const common::Actions &actions) {
-  os << "{\nisGameOver: " << actions.isGameOver
-     << "\nmoveActions: " << actions.moveActions
-     << "mergeActions: " << actions.mergeActions
-     << "newActions: " << actions.newActions << "}";
+  os << "{\n  isGameOver: " << actions.isGameOver
+     << "\n  moveActions: " << actions.moveActions
+     << "  mergeActions: " << actions.mergeActions
+     << "  newActions: " << actions.newActions << "}";
   return os;
 }
 
