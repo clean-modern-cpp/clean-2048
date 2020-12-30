@@ -1,103 +1,64 @@
 #include "entity/Board.h"
 
-#include <algorithm>
 #include <cassert>
+#include <unordered_map>
 #include <vector>
 
 namespace entity {
 
-template <common::Index Size>
-constexpr auto totalSizeOfMatrix = Size* Size;
-
-struct BaseDirectionTraits {
-  explicit BaseDirectionTraits(common::Index begin, common::Index end,
-                               common::Index offset)
-      : begin{begin}, end{end}, offset{offset} {}
-  const common::Index begin;
-  const common::Index end;
-  const common::Index offset;
-};
-
-template <common::Direction D, common::Index Size>
-struct DirectionTraits {};
-
-template <common::Index Size>
-struct DirectionTraits<common::Direction::left, Size> : BaseDirectionTraits {
-  explicit DirectionTraits(common::Index line)
-      : BaseDirectionTraits{line * Size, line * Size + Size, 1} {}
-};
-
-template <common::Index Size>
-struct DirectionTraits<common::Direction::right, Size> : BaseDirectionTraits {
-  explicit DirectionTraits(common::Index line)
-      : BaseDirectionTraits{(line + 1) * Size - 1, line * Size - 1, -1} {}
-};
-
-template <int Size>
-struct DirectionTraits<common::Direction::up, Size> : BaseDirectionTraits {
-  explicit DirectionTraits(common::Index line)
-      : BaseDirectionTraits{line, totalSizeOfMatrix<Size>, Size} {}
-};
-
-template <int Size>
-struct DirectionTraits<common::Direction::down, Size> : BaseDirectionTraits {
-  explicit DirectionTraits(common::Index line)
-      : BaseDirectionTraits{totalSizeOfMatrix<Size> - line - 1, -1, -Size} {}
-};
-
-template <common::Direction D, int Size>
-inline static common::Index next(common::Index index,
-                                 const DirectionTraits<D, Size>& dt) {
-  return index + dt.offset;
-}
-
-template <common::Direction D, int Size>
-inline static bool isInLine(common::Index index,
-                            const DirectionTraits<D, Size>& dt) {
-  return dt.offset > 0 ? index < dt.end : index > dt.end;
-}
-
 class Board::Impl {
  public:
-  Impl() : values(totalSizeOfMatrix<Size>, empty) {}
+  Impl(common::Index rows, common::Index cols) : rows{rows}, cols{cols} {
+    clear();
+  }
+
+  common::Index getRows() const { return rows; }
+  common::Index getCols() const { return cols; }
+
+  void clear() { matrix = std::vector<common::Value>(rows * cols, empty); }
 
   common::Positions emptyPositions() const {
     common::Positions positions;
-    for (auto index = 0; index < totalSizeOfMatrix<Size>; ++index) {
-      if (values[index] == empty) {
+    for (auto index = 0; index < totalSizeOfMatrix(); ++index) {
+      if (matrix[index] == empty) {
         positions.push_back(positionOf(index));
       }
     }
     return positions;
   }
 
-  void clear() {
-    values = std::vector<common::Value>(totalSizeOfMatrix<Size>, empty);
-  }
-
   common::NewAction addCell(common::Position pos, common::Value value) {
-    assert(pos.row >= 0 && pos.row < Size);
-    assert(pos.col >= 0 && pos.col < Size);
-    assert(values[indexOf(pos)] == empty);
-    values[indexOf(pos)] = value;
+    assert(pos.row >= 0 && pos.row < rows);
+    assert(pos.col >= 0 && pos.col < cols);
+    assert(matrix[indexOf(pos)] == empty);
+    matrix[indexOf(pos)] = value;
     return {pos, value};
   }
 
   common::SwipeAction swipe(common::Direction direction) {
     common::SwipeAction action;
-    for (auto line = 0; line < Size; ++line) {
+    const auto lastLine = (direction == common::Direction::left ||
+                           direction == common::Direction::right)
+                              ? rows
+                              : cols;
+    for (auto line = 0; line < lastLine; ++line) {
       switch (direction) {
         case common::Direction::left:
-          moveLine<common::Direction::left>(line, action);
+          moveLine(action, line * cols, 1, [&](const auto index) {
+            return index < line * cols + cols;
+          });
           break;
         case common::Direction::right:
-          moveLine<common::Direction::right>(line, action);
+          moveLine(action, line * cols + cols - 1, -1,
+                   [&](const auto index) { return index > line * cols - 1; });
           break;
         case common::Direction::up:
-          moveLine<common::Direction::up>(line, action);
+          moveLine(action, line, cols,
+                   [&](const auto index) { return index < rows * cols; });
           break;
         case common::Direction::down:
-          moveLine<common::Direction::down>(line, action);
+          moveLine(action, rows * cols - line - 1, -cols,
+                   [&](const auto index) { return index >= 0; });
           break;
       }
     }
@@ -105,61 +66,66 @@ class Board::Impl {
   }
 
  private:
-  static common::Index indexOf(common::Position pos) {
-    return pos.row * Size + pos.col;
+  common::Index totalSizeOfMatrix() const { return rows * cols; }
+  common::Index indexOf(common::Position pos) const {
+    return pos.row * cols + pos.col;
   }
-  static common::Position positionOf(common::Index index) {
-    return {index / Size, index % Size};
+  common::Position positionOf(common::Index index) const {
+    return {index / cols, index % cols};
   }
 
-  template <common::Direction direction>
-  void moveLine(common::Index line, common::SwipeAction& action) {
-    const DirectionTraits<direction, Size> dt{line};
-    common::Index dest = dt.begin;
-    common::Index src = next(dest, dt);
-    while (isInLine(dest, dt) && isInLine(src, dt)) {
-      while (isInLine(src, dt) && values[src] == empty) {
-        src = next(src, dt);
+  template <typename IsInLineFunc>
+  void moveLine(common::SwipeAction& action, common::Index begin,
+                common::Index offset, IsInLineFunc isInLine) {
+    common::Index dest = begin;
+    common::Index src = dest + offset;
+    while (isInLine(dest) && isInLine(src)) {
+      while (isInLine(src) && matrix[src] == empty) {
+        src += offset;
       }
-      if (isInLine(src, dt)) {
-        if (values[dest] == empty) {
-          std::swap(values[dest], values[src]);
+      if (isInLine(src)) {
+        if (matrix[dest] == empty) {
+          std::swap(matrix[dest], matrix[src]);
           action.moveActions.emplace_back(positionOf(src), positionOf(dest));
-        } else if (values[dest] != values[src]) {
-          dest = next(dest, dt);
+        } else if (matrix[dest] != matrix[src]) {
+          dest += offset;
           if (dest != src) {
-            std::swap(values[dest], values[src]);
+            std::swap(matrix[dest], matrix[src]);
             action.moveActions.emplace_back(positionOf(src), positionOf(dest));
           }
         } else {
-          const auto from = values[dest];
-          values[dest] = from * 2;
-          values[src] = empty;
+          const auto from = matrix[dest];
+          matrix[dest] = from * 2;
+          matrix[src] = empty;
           action.moveActions.emplace_back(positionOf(src), positionOf(dest));
-          action.changeActions.emplace_back(positionOf(dest), from,
-                                            values[dest]);
-          dest = next(dest, dt);
+          action.mergeActions.emplace_back(positionOf(dest), matrix[dest]);
+          dest += offset;
         }
-        src = next(src, dt);
+        src += offset;
       }
     }
   }
 
   constexpr static common::Value empty = 0;
-  constexpr static common::Index Size = 4;
 
-  std::vector<common::Value> values;
+  common::Index rows;
+  common::Index cols;
+  std::vector<common::Value> matrix;
 };
 
-Board::Board() : impl{std::make_unique<Impl>()} {}
+Board::Board(common::Index rows, common::Index cols)
+    : impl{std::make_unique<Impl>(rows, cols)} {}
 
 Board::~Board() {}
+
+common::Index Board::getRows() const { return impl->getRows(); }
+common::Index Board::getCols() const { return impl->getCols(); }
+
+void Board::clear() { impl->clear(); }
 
 common::Positions Board::emptyPositions() const {
   return impl->emptyPositions();
 }
-
-void Board::clear() { impl->clear(); }
 
 common::NewAction Board::addCell(common::Position pos, common::Value value) {
   return impl->addCell(pos, value);

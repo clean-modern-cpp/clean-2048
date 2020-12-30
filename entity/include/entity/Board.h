@@ -9,12 +9,16 @@ namespace entity {
 
 class Board {
  public:
-  Board();
+  Board(common::Index rows, common::Index cols);
   ~Board();
+
+  common::Index getRows() const;
+  common::Index getCols() const;
+
+  void clear();
 
   common::Positions emptyPositions() const;
 
-  void clear();
   common::NewAction addCell(common::Position pos, common::Value value);
   common::SwipeAction swipe(common::Direction direction);
 
