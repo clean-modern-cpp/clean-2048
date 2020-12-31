@@ -18,4 +18,8 @@ void setScorePresenter(ScorePresenter* presenter) {
   game.setScorePresenter(presenter);
 }
 
+void setGameOverPresenter(GameOverPresenter* presenter) {
+  game.setGameOverPresenter(presenter);
+}
+
 }  // namespace use_case

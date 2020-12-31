@@ -15,11 +15,21 @@ class Board::Impl {
   common::Index getRows() const { return rows; }
   common::Index getCols() const { return cols; }
 
-  void clear() { matrix = std::vector<common::Value>(rows * cols, empty); }
+  common::Values content() const { return values; }
+
+  common::Positions emptyPositions() const {
+    common::Positions positions;
+    for (auto index = 0; index < totalSizeOfMatrix(); ++index) {
+      if (values[index] == empty) {
+        positions.push_back(positionOf(index));
+      }
+    }
+    return positions;
+  }
 
   bool isGameOver() const {
     for (auto index = 0; index < rows * cols; ++index) {
-      if (matrix[index] == empty || isSameAsRight(index) ||
+      if (values[index] == empty || isSameAsRight(index) ||
           isSameAsBottom(index)) {
         return false;
       }
@@ -27,21 +37,13 @@ class Board::Impl {
     return true;
   }
 
-  common::Positions emptyPositions() const {
-    common::Positions positions;
-    for (auto index = 0; index < totalSizeOfMatrix(); ++index) {
-      if (matrix[index] == empty) {
-        positions.push_back(positionOf(index));
-      }
-    }
-    return positions;
-  }
+  void clear() { values = common::Values(rows * cols, empty); }
 
   common::NewAction addCell(common::Position pos, common::Value value) {
     assert(pos.row >= 0 && pos.row < rows);
     assert(pos.col >= 0 && pos.col < cols);
-    assert(matrix[indexOf(pos)] == empty);
-    matrix[indexOf(pos)] = value;
+    assert(values[indexOf(pos)] == empty);
+    values[indexOf(pos)] = value;
     return {pos, value};
   }
 
@@ -85,10 +87,10 @@ class Board::Impl {
   }
 
   bool isSameAsRight(common::Index index) const {
-    return index < rows * cols - 1 && matrix[index] == matrix[index + 1];
+    return index < rows * cols - 1 && values[index] == values[index + 1];
   }
   bool isSameAsBottom(common::Index index) const {
-    return index < rows * cols - cols && matrix[index] == matrix[index + cols];
+    return index < rows * cols - cols && values[index] == values[index + cols];
   }
 
   template <typename IsInLineFunc>
@@ -97,25 +99,25 @@ class Board::Impl {
     common::Index dest = begin;
     common::Index src = dest + offset;
     while (isInLine(dest) && isInLine(src)) {
-      while (isInLine(src) && matrix[src] == empty) {
+      while (isInLine(src) && values[src] == empty) {
         src += offset;
       }
       if (isInLine(src)) {
-        if (matrix[dest] == empty) {
-          std::swap(matrix[dest], matrix[src]);
+        if (values[dest] == empty) {
+          std::swap(values[dest], values[src]);
           action.moveActions.emplace_back(positionOf(src), positionOf(dest));
-        } else if (matrix[dest] != matrix[src]) {
+        } else if (values[dest] != values[src]) {
           dest += offset;
           if (dest != src) {
-            std::swap(matrix[dest], matrix[src]);
+            std::swap(values[dest], values[src]);
             action.moveActions.emplace_back(positionOf(src), positionOf(dest));
           }
         } else {
-          const auto from = matrix[dest];
-          matrix[dest] = from * 2;
-          matrix[src] = empty;
+          const auto from = values[dest];
+          values[dest] = from * 2;
+          values[src] = empty;
           action.moveActions.emplace_back(positionOf(src), positionOf(dest));
-          action.mergeActions.emplace_back(positionOf(dest), matrix[dest]);
+          action.mergeActions.emplace_back(positionOf(dest), values[dest]);
           dest += offset;
         }
         src += offset;
@@ -127,7 +129,7 @@ class Board::Impl {
 
   common::Index rows;
   common::Index cols;
-  std::vector<common::Value> matrix;
+  common::Values values;
 };
 
 Board::Board(common::Index rows, common::Index cols)
@@ -138,12 +140,15 @@ Board::~Board() {}
 common::Index Board::getRows() const { return impl->getRows(); }
 common::Index Board::getCols() const { return impl->getCols(); }
 
-void Board::clear() { impl->clear(); }
+common::Values Board::content() const { return impl->content(); }
 
-bool Board::isGameOver() const { return impl->isGameOver(); }
 common::Positions Board::emptyPositions() const {
   return impl->emptyPositions();
 }
+
+bool Board::isGameOver() const { return impl->isGameOver(); }
+
+void Board::clear() { impl->clear(); }
 
 common::NewAction Board::addCell(common::Position pos, common::Value value) {
   return impl->addCell(pos, value);

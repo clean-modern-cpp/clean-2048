@@ -6,6 +6,7 @@
 #include "RandomImpl.h"
 #include "common/Model.h"
 #include "use_case/BoardPresenter.h"
+#include "use_case/GameOverPresenter.h"
 #include "use_case/GamePlay.h"
 #include "use_case/ScorePresenter.h"
 
@@ -25,6 +26,10 @@ class Game : public GamePlay {
   void setScorePresenter(ScorePresenter* presenter) {
     scorePresenter = presenter;
   }
+  void setGameOverPresenter(GameOverPresenter* presenter) {
+    gameOverPresenter = presenter;
+  }
+
   void setRandom(std::unique_ptr<Random> r) { random = std::move(r); }
 
   void newGame() override {
@@ -44,7 +49,7 @@ class Game : public GamePlay {
                           ? common::NewActions{}
                           : common::NewActions{newCell()};
     score.update(swipeAction);
-    presentAll({board.isGameOver(), std::move(swipeAction.moveActions),
+    presentAll({std::move(swipeAction.moveActions),
                 std::move(swipeAction.mergeActions), std::move(newActions)});
   }
 
@@ -63,6 +68,9 @@ class Game : public GamePlay {
     if (scorePresenter) {
       scorePresenter->present(score.getScore(), score.getBestScore());
     }
+    if (gameOverPresenter && board.isGameOver()) {
+      gameOverPresenter->present();
+    }
   }
 
   Board board;
@@ -70,6 +78,7 @@ class Game : public GamePlay {
 
   BoardPresenter* boardPresenter = nullptr;
   ScorePresenter* scorePresenter = nullptr;
+  GameOverPresenter* gameOverPresenter = nullptr;
 
   std::unique_ptr<Random> random;
 };

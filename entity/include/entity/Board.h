@@ -15,11 +15,11 @@ class Board {
   common::Index getRows() const;
   common::Index getCols() const;
 
-  void clear();
-
-  bool isGameOver() const;
+  common::Values content() const;
   common::Positions emptyPositions() const;
+  bool isGameOver() const;
 
+  void clear();
   common::NewAction addCell(common::Position pos, common::Value value);
   common::SwipeAction swipe(common::Direction direction);
 

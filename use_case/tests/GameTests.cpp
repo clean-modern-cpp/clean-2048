@@ -23,12 +23,16 @@ class RandomMockup : public use_case::Random {
   inline static std::vector<int> values{2, 5, 1, 1};
 };
 
+template <bool GameOver>
 class BoardMockup {
  public:
   BoardMockup(common::Index, common::Index) {}
 
   void clear() { oss << "Board::clear()\n"; }
-  bool isGameOver() const { return false; }
+  bool isGameOver() const {
+    oss << "Board::isGameOver() -> " << GameOver << "\n";
+    return GameOver;
+  }
   common::Positions emptyPositions() const {
     oss << "Board::emptyPositions()";
     auto positions =
@@ -87,8 +91,13 @@ class BoardPresenterMockup : public use_case::BoardPresenter {
 class ScorePresenterMockup : public use_case::ScorePresenter {
  public:
   void present(int score, int bestScore) override {
-    oss << "ScorePresenter::presenter(" << score << ", " << bestScore << ")\n";
+    oss << "ScorePresenter::presente(" << score << ", " << bestScore << ")\n";
   }
+};
+
+class GameOverPresenterMockup : public use_case::GameOverPresenter {
+ public:
+  void present() override { oss << "GameOverPresenter::presente()\n"; }
 };
 
 /*
@@ -97,11 +106,14 @@ class ScorePresenterMockup : public use_case::ScorePresenter {
  *   - Call Random next(1, 10) for new cell value (1/10: 4, 9/10: 2)
  */
 TEST_CASE("New game") {
-  use_case::Game<BoardMockup, ScoreMockup> game;
+  oss = std::ostringstream{};
+  use_case::Game<BoardMockup<false>, ScoreMockup> game;
   BoardPresenterMockup boardPresenter;
   game.setBoardPresenter(&boardPresenter);
   ScorePresenterMockup scorePresenter;
   game.setScorePresenter(&scorePresenter);
+  GameOverPresenterMockup gameOverPresenter;
+  game.setGameOverPresenter(&gameOverPresenter);
   game.setRandom(std::make_unique<RandomMockup>());
   game.newGame();
   REQUIRE_EQ(oss.str(), R"(BoardPresenter::initWithDimension(4, 4)
@@ -115,24 +127,26 @@ Random::next(0, 4) -> 1
 Random::next(1, 10) -> 1
 Board::addCell({0, 1}, 4})
 BoardPresenter::present({
-  isGameOver: 0
   moveActions: []
   mergeActions: []
   newActions: [{{1, 0}, 2}, {{0, 1}, 4}]
 })
 Score::getScore()
 Score::getBestScore()
-ScorePresenter::presenter(10, 100)
+ScorePresenter::presente(10, 100)
+Board::isGameOver() -> 0
 )");
-  oss.str("");
 }
 
 TEST_CASE("Swipe") {
-  use_case::Game<BoardMockup, ScoreMockup> game;
+  oss = std::ostringstream{};
+  use_case::Game<BoardMockup<false>, ScoreMockup> game;
   BoardPresenterMockup boardPresenter;
   game.setBoardPresenter(&boardPresenter);
   ScorePresenterMockup scorePresenter;
   game.setScorePresenter(&scorePresenter);
+  GameOverPresenterMockup gameOverPresenter;
+  game.setGameOverPresenter(&gameOverPresenter);
   game.setRandom(std::make_unique<RandomMockup>());
   game.swipe(common::Direction::left);
   REQUIRE_EQ(oss.str(), R"(Board::swipe()
@@ -142,14 +156,43 @@ Random::next(1, 10) -> 5
 Board::addCell({1, 0}, 2})
 Score::update()
 BoardPresenter::present({
-  isGameOver: 0
   moveActions: [{{0, 0}, {1, 1}}]
   mergeActions: [{{2, 2}, 8}]
   newActions: [{{1, 0}, 2}]
 })
 Score::getScore()
 Score::getBestScore()
-ScorePresenter::presenter(10, 100)
+ScorePresenter::presente(10, 100)
+Board::isGameOver() -> 0
 )");
-  oss.str("");
+}
+
+TEST_CASE("Game over") {
+  oss = std::ostringstream{};
+  use_case::Game<BoardMockup<true>, ScoreMockup> game;
+  BoardPresenterMockup boardPresenter;
+  game.setBoardPresenter(&boardPresenter);
+  ScorePresenterMockup scorePresenter;
+  game.setScorePresenter(&scorePresenter);
+  GameOverPresenterMockup gameOverPresenter;
+  game.setGameOverPresenter(&gameOverPresenter);
+  game.setRandom(std::make_unique<RandomMockup>());
+  game.swipe(common::Direction::left);
+  REQUIRE_EQ(oss.str(), R"(Board::swipe()
+Board::emptyPositions() -> [{0, 0}, {0, 1}, {1, 0}, {1, 1}, {2, 0}, {2, 1}]
+Random::next(0, 5) -> 2
+Random::next(1, 10) -> 5
+Board::addCell({1, 0}, 2})
+Score::update()
+BoardPresenter::present({
+  moveActions: [{{0, 0}, {1, 1}}]
+  mergeActions: [{{2, 2}, 8}]
+  newActions: [{{1, 0}, 2}]
+})
+Score::getScore()
+Score::getBestScore()
+ScorePresenter::presente(10, 100)
+Board::isGameOver() -> 1
+GameOverPresenter::presente()
+)");
 }

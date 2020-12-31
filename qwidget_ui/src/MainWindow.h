@@ -21,8 +21,6 @@ class MainWindow : public QWidget {
   void bestScoreChanged(int bestScore);
 
  private:
-  void keyPressEvent(QKeyEvent *event);
-
   void onScoreInc(int);
   void onGameOver();
   void onWin();

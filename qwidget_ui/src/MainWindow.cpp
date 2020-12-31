@@ -36,8 +36,3 @@ void MainWindow::onGameOver() {
 void MainWindow::onWin() {
   QMessageBox::information(this, "Congratulation", "You win !");
 }
-
-void MainWindow::keyPressEvent(QKeyEvent *event) {
-  ui->boardView->setFocus();
-  QWidget::keyPressEvent(event);
-}

@@ -112,8 +112,7 @@ inline std::ostream &operator<<(std::ostream &os,
 
 inline std::ostream &operator<<(std::ostream &os,
                                 const common::Actions &actions) {
-  os << "{\n  isGameOver: " << actions.isGameOver
-     << "\n  moveActions: " << actions.moveActions
+  os << "{\n  moveActions: " << actions.moveActions
      << "  mergeActions: " << actions.mergeActions
      << "  newActions: " << actions.newActions << "}";
   return os;

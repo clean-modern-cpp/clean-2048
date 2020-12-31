@@ -56,9 +56,17 @@ inline void addCells(entity::Board& board,
   }
 }
 
+/*
+ *  0 0 0 0
+ *  0 0 0 0
+ *  0 0 0 0
+ *  0 0 0 0
+ */
 TEST_CASE("Empty board") {
   auto board = defaultBoard();
   REQUIRE_EQ(board.emptyPositions(), allPositionsOf(board));
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
 }
 
 /*
@@ -72,6 +80,8 @@ TEST_CASE("Add one cell") {
   REQUIRE_EQ(board.addCell({1, 1}, 2), common::NewAction{{1, 1}, 2});
   const auto expectedPositions = erase(allPositionsOf(board), {1, 1});
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
 }
 
 /*
@@ -87,6 +97,8 @@ TEST_CASE("Add two cells") {
   const auto expectedPositions =
       erase(erase(allPositionsOf(board), {1, 1}), {2, 2});
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0});
 }
 
 TEST_CASE("Clear") {
@@ -95,6 +107,8 @@ TEST_CASE("Clear") {
   REQUIRE_EQ(board.addCell({2, 2}, 4), common::NewAction{{2, 2}, 4});
   board.clear();
   REQUIRE_EQ(board.emptyPositions(), allPositionsOf(board));
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
 }
 
 /*
@@ -118,6 +132,8 @@ TEST_CASE("Move one cell left") {
   REQUIRE_EQ(board.swipe(common::Direction::left), expectedAction);
   const auto expectedPositionsAfter = erase(allPositionsOf(board), {1, 0});
   REQUIRE_EQ(board.emptyPositions(), expectedPositionsAfter);
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
 }
 
 /*
@@ -138,6 +154,8 @@ TEST_CASE("Move one cell right") {
   REQUIRE_EQ(board.swipe(common::Direction::right), expectedAction);
   const auto expectedPositions = erase(allPositionsOf(board), {1, 3});
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0});
 }
 
 /*
@@ -158,6 +176,8 @@ TEST_CASE("Move one cell up") {
   REQUIRE_EQ(board.swipe(common::Direction::up), expectedAction);
   const auto expectedPositions = erase(allPositionsOf(board), {0, 1});
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
 }
 
 /*
@@ -178,6 +198,8 @@ TEST_CASE("Move one cell down") {
   REQUIRE_EQ(board.swipe(common::Direction::down), expectedAction);
   const auto expectedPositions = erase(allPositionsOf(board), {3, 1});
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0});
 }
 
 /*
@@ -205,6 +227,8 @@ TEST_CASE("Move two cells left") {
   const auto expectedPositionsAfter =
       erase(erase(allPositionsOf(board), {1, 0}), {1, 1});
   REQUIRE_EQ(board.emptyPositions(), expectedPositionsAfter);
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
 }
 
 /*
@@ -228,6 +252,8 @@ TEST_CASE("Move two cells right") {
   const auto expectedPositions =
       erase(erase(allPositionsOf(board), {1, 2}), {1, 3});
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 0, 0, 0, 0, 0, 2, 4, 0, 0, 0, 0, 0, 0, 0, 0});
 }
 
 /*
@@ -251,6 +277,8 @@ TEST_CASE("Move two cells up") {
   const auto expectedPositions =
       erase(erase(allPositionsOf(board), {0, 1}), {1, 1});
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 2, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
 }
 
 /*
@@ -274,6 +302,8 @@ TEST_CASE("Move two cells down") {
   const auto expectedPositions =
       erase(erase(allPositionsOf(board), {2, 1}), {3, 1});
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 4, 0, 0});
 }
 
 /*
@@ -302,6 +332,8 @@ TEST_CASE("Move two cells left and merge") {
   REQUIRE_EQ(board.swipe(common::Direction::left), expectedAction);
   const auto expectedPositionsAfter = erase(allPositionsOf(board), {1, 0});
   REQUIRE_EQ(board.emptyPositions(), expectedPositionsAfter);
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
 }
 
 /*
@@ -326,6 +358,8 @@ TEST_CASE("Move two cells right and merge") {
   REQUIRE_EQ(board.swipe(common::Direction::right), expectedAction);
   const auto expectedPositions = erase(allPositionsOf(board), {1, 3});
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0});
 }
 
 /*
@@ -349,6 +383,8 @@ TEST_CASE("Move two cells up and merge") {
   REQUIRE_EQ(board.swipe(common::Direction::up), expectedAction);
   const auto expectedPositions = erase(allPositionsOf(board), {0, 1});
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
 }
 
 /*
@@ -372,6 +408,8 @@ TEST_CASE("Move two cells up and merge") {
   REQUIRE_EQ(board.swipe(common::Direction::down), expectedAction);
   const auto expectedPositions = erase(allPositionsOf(board), {3, 1});
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0});
 }
 
 /*
@@ -413,6 +451,8 @@ TEST_CASE("Move multi-line cells left and merge") {
       {0, 2}, {0, 3}, {1, 2}, {1, 3}, {2, 2}, {2, 3}, {3, 1}, {3, 2}, {3, 3},
   };
   REQUIRE_EQ(board.emptyPositions(), expectedPositionsAfter);
+  REQUIRE_EQ(board.content(),
+             common::Values{8, 8, 0, 0, 8, 4, 0, 0, 4, 2, 0, 0, 4, 0, 0, 0});
 }
 
 /*
@@ -450,6 +490,8 @@ TEST_CASE("Move multi-line cells right and merge") {
       {0, 0}, {0, 1}, {1, 0}, {1, 1}, {2, 0}, {2, 1}, {3, 0}, {3, 1}, {3, 2},
   };
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 0, 8, 8, 0, 0, 4, 8, 0, 0, 2, 4, 0, 0, 0, 4});
 }
 
 /*
@@ -485,6 +527,8 @@ TEST_CASE("Move multi-line cells up and merge") {
       {1, 0}, {2, 0}, {2, 1}, {2, 2}, {2, 3}, {3, 0}, {3, 1}, {3, 2}, {3, 3},
   };
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+  REQUIRE_EQ(board.content(),
+             common::Values{8, 8, 8, 4, 0, 4, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0});
 }
 
 /*
@@ -522,6 +566,8 @@ TEST_CASE("Move multi-line cells down and merge") {
       {0, 0}, {0, 1}, {0, 2}, {0, 3}, {1, 0}, {1, 1}, {1, 2}, {1, 3}, {2, 0},
   };
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 8, 4, 8, 4, 4, 2});
 }
 
 /*
@@ -535,6 +581,8 @@ TEST_CASE("Can not move") {
   board.addCell({1, 0}, 4);
   board.addCell({1, 1}, 2);
   REQUIRE_EQ(board.swipe(common::Direction::left), common::SwipeAction{});
+  REQUIRE_EQ(board.content(),
+             common::Values{0, 0, 0, 0, 4, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
 }
 
 /*
@@ -575,6 +623,8 @@ TEST_CASE("Board of 4 rows and 5 cols") {
       {2, 1}, {2, 2}, {3, 0}, {3, 1}, {3, 2}, {3, 3},
   };
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
+  REQUIRE_EQ(board.content(), common::Values{0, 0, 0, 8, 8, 0, 0, 0, 4, 8,
+                                             0, 0, 0, 2, 4, 0, 0, 0, 0, 4});
 }
 
 /*

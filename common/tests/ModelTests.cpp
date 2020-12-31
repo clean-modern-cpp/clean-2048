@@ -39,7 +39,6 @@ TEST_CASE("Actions test") {
   actions.newActions.emplace_back(common::Position{0, 0}, 2);
   actions.newActions.emplace_back(common::Position{1, 1}, 4);
   REQUIRE_EQ(actions, common::Actions{
-                          false,
                           {
                               {{0, 0}, {0, 1}},
                           },

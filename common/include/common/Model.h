@@ -8,6 +8,7 @@ namespace common {
 
 using Index = int;
 using Value = int;
+using Values = std::vector<Value>;
 
 enum class Direction { left, right, up, down };
 
@@ -72,7 +73,6 @@ struct SwipeAction {
 };
 
 struct Actions {
-  bool isGameOver;
   MoveActions moveActions;
   MergeActions mergeActions;
   NewActions newActions;
