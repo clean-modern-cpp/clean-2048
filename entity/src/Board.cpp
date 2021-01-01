@@ -87,7 +87,8 @@ class Board::Impl {
   }
 
   bool isSameAsRight(common::Index index) const {
-    return index % cols < cols - 1 && values[index] == values[index + 1];
+    return positionOf(index).col % cols < cols - 1 &&
+           values[index] == values[index + 1];
   }
   bool isSameAsBottom(common::Index index) const {
     return index < rows * cols - cols && values[index] == values[index + cols];

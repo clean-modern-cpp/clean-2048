@@ -25,7 +25,6 @@ TEST_CASE("Body of new actions") {
   console_ui::BoardView boardView;
   boardView.intiWithDimension(4, 4);
   common::Actions newActions{
-      false,
       {},
       {},
       {
