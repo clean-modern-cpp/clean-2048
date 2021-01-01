@@ -9,20 +9,24 @@ namespace entity {
 
 class Board {
  public:
-  Board(common::Index rows, common::Index cols,
-        common::Values initialValues = {});
+  Board();
+  Board(common::Index rows, common::Index cols, common::NewActions newActions);
   ~Board();
+
+  Board(Board&&);
+  Board& operator=(Board&&);
 
   common::Index getRows() const;
   common::Index getCols() const;
 
-  common::Values content() const;
   common::Positions emptyPositions() const;
   bool isGameOver() const;
 
   void clear();
   common::NewAction addCell(common::Position pos, common::Value value);
   common::SwipeAction swipe(common::Direction direction);
+
+  common::NewActions restoreActions() const;
 
  private:
   class Impl;

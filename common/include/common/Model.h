@@ -58,6 +58,7 @@ struct NewAction {
   Position pos;
   Value value;
 
+  NewAction() : pos(0, 0), value(0) {}
   NewAction(Position pos, Value value) : pos{pos}, value{value} {}
 };
 

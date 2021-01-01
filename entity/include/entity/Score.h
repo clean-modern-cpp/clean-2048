@@ -10,7 +10,11 @@ namespace entity {
 class Score {
  public:
   Score();
+  Score(int score, int bestScore);
   ~Score();
+
+  Score(Score&&);
+  Score& operator=(Score&&);
 
   int getScore() const;
   int getBestScore() const;

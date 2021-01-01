@@ -7,11 +7,13 @@ namespace storage {
 
 class Storage : public use_case::Storage {
  public:
-  use_case::ScoreStorage loadScore() override;
-  use_case::BoardStorage loadBoard() override;
+  use_case::ScoreData loadScore() override;
+  use_case::BoardData loadBoard() override;
 
-  void saveScore(const use_case::ScoreStorage& scoreStorage) override;
-  void saveBoard(const use_case::BoardStorage& boardStorage) override;
+  void saveScore(const use_case::ScoreData& scoreData) override;
+  void saveBoard(const use_case::BoardData& boardData) override;
+
+  void clear() override;
 };
 
 }  // namespace storage

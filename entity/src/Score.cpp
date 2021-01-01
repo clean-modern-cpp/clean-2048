@@ -6,6 +6,8 @@ namespace entity {
 
 class Score::Impl {
  public:
+  Impl(int score, int bestScore) : score{score}, bestScore{bestScore} {}
+
   int getScore() const { return score; }
   int getBestScore() const { return bestScore; }
 
@@ -23,9 +25,15 @@ class Score::Impl {
   int bestScore = 0;
 };
 
-Score::Score() : impl{std::make_unique<Impl>()} {}
+Score::Score() : Score{0, 0} {}
 
-Score::~Score() {}
+Score::Score(int score, int bestScore)
+    : impl{std::make_unique<Impl>(score, bestScore)} {}
+
+Score::~Score() = default;
+
+Score::Score(Score&&) = default;
+Score& Score::operator=(Score&&) = default;
 
 int Score::getScore() const { return impl->getScore(); }
 int Score::getBestScore() const { return impl->getBestScore(); }

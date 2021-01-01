@@ -7,8 +7,10 @@
 #include "common/Model.h"
 #include "use_case/BoardPresenter.h"
 #include "use_case/GameOverPresenter.h"
-#include "use_case/GamePlay.h"
+#include "use_case/GamePlayUseCase.h"
+#include "use_case/GameStorageUseCase.h"
 #include "use_case/ScorePresenter.h"
+#include "use_case/Storage.h"
 
 namespace use_case {
 
@@ -16,9 +18,9 @@ constexpr common::Index rows = 4;
 constexpr common::Index cols = 4;
 
 template <typename Board, typename Score>
-class Game : public GamePlay {
+class Game : public GamePlayUseCase, public GameStorageUseCase {
  public:
-  Game() : board{rows, cols}, random{std::make_unique<RandomImpl>()} {}
+  Game() : random{std::make_unique<RandomImpl>()} {}
 
   void setBoardPresenter(BoardPresenter* presenter) {
     boardPresenter = presenter;
@@ -31,16 +33,24 @@ class Game : public GamePlay {
   }
 
   void setRandom(std::unique_ptr<Random> r) { random = std::move(r); }
+  void setStorage(std::unique_ptr<Storage> s) { storage = std::move(s); }
 
   void newGame() override {
-    if (boardPresenter) {
-      boardPresenter->initWithDimension(4, 4);
-    }
     board.clear();
+
+    assert(boardPresenter);
+    boardPresenter->initWithDimension(4, 4);
+    boardPresenter->presentClear();
+
     common::Actions actions;
     actions.newActions.push_back(newCell());
     actions.newActions.push_back(newCell());
     presentAll(actions);
+  }
+
+  void startGame() override {
+    assert(boardPresenter);
+    boardPresenter->initWithDimension(4, 4);
   }
 
   void swipe(common::Direction direction) override {
@@ -53,6 +63,13 @@ class Game : public GamePlay {
                 std::move(swipeAction.mergeActions), std::move(newActions)});
   }
 
+  void saveGame() override {
+    assert(storage);
+    storage->saveScore({score.getScore(), score.getBestScore()});
+    storage->saveBoard(
+        {board.getRows(), board.getCols(), board.restoreActions()});
+  }
+
  private:
   common::NewAction newCell() {
     const auto emptyPositions = board.emptyPositions();
@@ -62,15 +79,23 @@ class Game : public GamePlay {
   }
 
   void presentAll(common::Actions actions) {
-    if (boardPresenter) {
-      boardPresenter->present(std::move(actions));
-    }
-    if (scorePresenter) {
-      scorePresenter->present(score.getScore(), score.getBestScore());
-    }
-    if (gameOverPresenter && board.isGameOver()) {
+    assert(boardPresenter);
+    boardPresenter->present(std::move(actions));
+    assert(scorePresenter);
+    scorePresenter->present(score.getScore(), score.getBestScore());
+    if (board.isGameOver()) {
+      assert(gameOverPresenter);
       gameOverPresenter->present();
     }
+  }
+
+  common::NewActions loadGame() {
+    assert(storage);
+    const auto scoreStorage = storage->loadScore();
+    score = Score{scoreStorage.score, scoreStorage.bestScore};
+    const auto boardStorage = storage->loadBoard();
+    board =
+        Board{boardStorage.rows, boardStorage.cols, boardStorage.newActions};
   }
 
   Board board;
@@ -81,7 +106,8 @@ class Game : public GamePlay {
   GameOverPresenter* gameOverPresenter = nullptr;
 
   std::unique_ptr<Random> random;
-};
+  std::unique_ptr<Storage> storage;
+};  // namespace use_case
 
 }  // namespace use_case
 

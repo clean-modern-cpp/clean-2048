@@ -7,15 +7,16 @@ namespace entity {
 
 class Board::Impl {
  public:
-  Impl(common::Index rows, common::Index cols, common::Values initialValues)
-      : rows{rows}, cols{cols}, values{initialValues} {
-    values.resize(rows * cols, empty);
+  Impl(common::Index rows, common::Index cols, common::NewActions newActions)
+      : rows{rows}, cols{cols}, values(rows * cols, empty) {
+    for (const auto& [pos, value] : newActions) {
+      assert(pos.row >= 0 && pos.row < rows && pos.col >= 0 && pos.col < cols);
+      values[indexOf(pos)] = value;
+    }
   }
 
   common::Index getRows() const { return rows; }
   common::Index getCols() const { return cols; }
-
-  common::Values content() const { return values; }
 
   common::Positions emptyPositions() const {
     common::Positions positions;
@@ -77,6 +78,16 @@ class Board::Impl {
     return action;
   }
 
+  common::NewActions restoreActions() const {
+    common::NewActions newActions;
+    for (auto index = 0; index < totalSizeOfMatrix(); ++index) {
+      if (values[index] != empty) {
+        newActions.emplace_back(positionOf(index), values[index]);
+      }
+    }
+    return newActions;
+  }
+
  private:
   common::Index totalSizeOfMatrix() const { return rows * cols; }
   common::Index indexOf(common::Position pos) const {
@@ -133,16 +144,19 @@ class Board::Impl {
   common::Values values;
 };
 
-Board::Board(common::Index rows, common::Index cols,
-             common::Values initialValues)
-    : impl{std::make_unique<Impl>(rows, cols, initialValues)} {}
+Board::Board() : Board{0, 0, {}} {}
 
-Board::~Board() {}
+Board::Board(common::Index rows, common::Index cols,
+             common::NewActions newActions)
+    : impl{std::make_unique<Impl>(rows, cols, newActions)} {}
+
+Board::~Board() = default;
+
+Board::Board(Board&&) = default;
+Board& Board::operator=(Board&&) = default;
 
 common::Index Board::getRows() const { return impl->getRows(); }
 common::Index Board::getCols() const { return impl->getCols(); }
-
-common::Values Board::content() const { return impl->content(); }
 
 common::Positions Board::emptyPositions() const {
   return impl->emptyPositions();
@@ -158,6 +172,10 @@ common::NewAction Board::addCell(common::Position pos, common::Value value) {
 
 common::SwipeAction Board::swipe(common::Direction direction) {
   return impl->swipe(direction);
+}
+
+common::NewActions Board::restoreActions() const {
+  return impl->restoreActions();
 }
 
 }  // namespace entity

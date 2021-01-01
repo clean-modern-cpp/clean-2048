@@ -3,18 +3,31 @@
 
 #include "storage/Storage.h"
 
+TEST_CASE("Default") {
+  storage::Storage storage;
+  storage.clear();
+  REQUIRE_EQ(storage.loadScore(), use_case::ScoreData{0, 0});
+  REQUIRE_EQ(storage.loadBoard(), use_case::BoardData{4, 4, {}});
+}
+
 TEST_CASE("Save score") {
   storage::Storage storage;
-  const use_case::ScoreStorage score{10, 100};
-  storage.saveScore(score);
-  const auto loadedScore = storage.loadScore();
-  REQUIRE_EQ(score, loadedScore);
+  const use_case::ScoreData scoreData{10, 100};
+  storage.saveScore(scoreData);
+  REQUIRE_EQ(storage.loadScore(), scoreData);
 }
 
 TEST_CASE("Save board") {
   storage::Storage storage;
-  const use_case::BoardStorage board{2, 2, {1, 2, 3, 4}};
-  storage.saveBoard(board);
-  const auto loadedBoard = storage.loadBoard();
-  REQUIRE_EQ(board, loadedBoard);
+
+  const use_case::BoardData boardData{2,
+                                      2,
+                                      {
+                                          {{0, 0}, 1},
+                                          {{0, 1}, 2},
+                                          {{1, 0}, 3},
+                                          {{1, 1}, 4},
+                                      }};
+  storage.saveBoard(boardData);
+  REQUIRE_EQ(storage.loadBoard(), boardData);
 }

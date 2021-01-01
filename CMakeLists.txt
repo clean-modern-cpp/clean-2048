@@ -10,11 +10,37 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-cpmaddpackage(NAME doctest GITHUB_REPOSITORY onqtam/doctest GIT_TAG 2.4.1)
+cpmaddpackage(
+  NAME
+  doctest
+  GITHUB_REPOSITORY
+  onqtam/doctest
+  GIT_TAG
+  2.4.1
+  GIT_SHALLOW
+  TRUE)
+cpmaddpackage(
+  NAME
+  spdlog
+  GITHUB_REPOSITORY
+  gabime/spdlog
+  VERSION
+  1.8.0
+  GIT_SHALLOW
+  TRUE)
+cpmaddpackage(
+  NAME
+  yaml-cpp
+  GITHUB_REPOSITORY
+  jbeder/yaml-cpp
+  GIT_TAG
+  yaml-cpp-0.6.3
+  GIT_SHALLOW
+  TRUE
+  OPTIONS
+  "YAML_CPP_BUILD_TESTS OFF")
+
 include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
-cpmaddpackage(NAME spdlog GITHUB_REPOSITORY gabime/spdlog VERSION 1.8.0)
-cpmaddpackage(NAME yaml-cpp GITHUB_REPOSITORY jbeder/yaml-cpp GIT_TAG
-              yaml-cpp-0.6.3)
 
 add_compile_options(-Wall -Werror -Wextra -pedantic)
 

@@ -3,7 +3,7 @@
 #include "entity/Score.h"
 
 TEST_CASE("Update score") {
-  entity::Score score;
+  entity::Score score(0, 0);
   score.update({
       {},
       {
