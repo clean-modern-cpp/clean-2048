@@ -1,15 +1,15 @@
 #include "entity/Board.h"
 
 #include <cassert>
-#include <unordered_map>
 #include <vector>
 
 namespace entity {
 
 class Board::Impl {
  public:
-  Impl(common::Index rows, common::Index cols) : rows{rows}, cols{cols} {
-    clear();
+  Impl(common::Index rows, common::Index cols, common::Values initialValues)
+      : rows{rows}, cols{cols}, values{initialValues} {
+    values.resize(rows * cols, empty);
   }
 
   common::Index getRows() const { return rows; }
@@ -87,7 +87,7 @@ class Board::Impl {
   }
 
   bool isSameAsRight(common::Index index) const {
-    return index < rows * cols - 1 && values[index] == values[index + 1];
+    return index % cols < cols - 1 && values[index] == values[index + 1];
   }
   bool isSameAsBottom(common::Index index) const {
     return index < rows * cols - cols && values[index] == values[index + cols];
@@ -132,8 +132,9 @@ class Board::Impl {
   common::Values values;
 };
 
-Board::Board(common::Index rows, common::Index cols)
-    : impl{std::make_unique<Impl>(rows, cols)} {}
+Board::Board(common::Index rows, common::Index cols,
+             common::Values initialValues)
+    : impl{std::make_unique<Impl>(rows, cols, initialValues)} {}
 
 Board::~Board() {}
 

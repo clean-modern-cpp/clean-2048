@@ -1,5 +1,6 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.1
+import GameOverViewModel 1.0
 
 ApplicationWindow {
     id: window;
@@ -36,12 +37,25 @@ ApplicationWindow {
        id: board
     }
 
+    GameOverViewModel {
+        id: gameOverViewModel
+    }
+
     GameOverWnd {
-        id: gameOverWnd;
+        id: gameOverWnd
+    }
+
+    Connections {
+        target: gameOverViewModel
+
+        function onGameOver() {
+            gameOverWnd.visible = true
+            gameOverWnd.opacity = 1.0
+        }
     }
 
     OptionsWnd {
-        id: optionsWnd;
+        id: optionsWnd
 
         onApply: {
             var value = boardSize + 4;

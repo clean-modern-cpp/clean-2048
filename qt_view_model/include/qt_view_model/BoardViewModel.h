@@ -41,7 +41,7 @@ class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
         emit completeCellMove(from.row, from.col, to.row, to.col);
       }
       for (const auto& [pos, toValue] : actions.mergeActions) {
-        emit changeCell(pos.row, pos.col, QString::number(toValue));
+        emit mergeCell(pos.row, pos.col, QString::number(toValue));
       }
       for (const auto& [pos, value] : actions.newActions) {
         emit newCell(pos.row, pos.col, QString::number(value));
@@ -60,7 +60,7 @@ class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
   void newCell(int row, int col, QString value);
   void startCellMove(int fromRow, int fromCol, int toRow, int toCol);
   void completeCellMove(int fromRow, int fromCol, int toRow, int toCol);
-  void changeCell(int row, int col, QString value);
+  void mergeCell(int row, int col, QString toValue);
 
  private:
   int rows = 4;

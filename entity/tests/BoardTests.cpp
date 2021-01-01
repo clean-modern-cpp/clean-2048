@@ -26,11 +26,10 @@ inline common::Positions erase(common::Positions positions,
   return result;
 }
 
-entity::Board defaultBoard() {
-  constexpr common::Index rows = 4;
-  constexpr common::Index cols = 4;
-  return entity::Board{rows, cols};
-}
+constexpr common::Index defaultRows = 4;
+constexpr common::Index defaultCols = 4;
+
+entity::Board defaultBoard() { return entity::Board{defaultRows, defaultCols}; }
 
 struct Cell {
   common::Position pos;
@@ -64,9 +63,42 @@ inline void addCells(entity::Board& board,
  */
 TEST_CASE("Empty board") {
   auto board = defaultBoard();
+  REQUIRE_EQ(board.getRows(), defaultRows);
+  REQUIRE_EQ(board.getCols(), defaultCols);
   REQUIRE_EQ(board.emptyPositions(), allPositionsOf(board));
   REQUIRE_EQ(board.content(),
              common::Values{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+}
+
+/*
+ *  4 8 2
+ *  8 0 4
+ *  2 4 8
+ */
+TEST_CASE("Game over is false when have empty cells") {
+  entity::Board board(3, 3, {4, 8, 2, 8, 0, 4, 2, 4, 8});
+  REQUIRE_EQ(board.isGameOver(), false);
+}
+
+/*
+ *  4 8 2
+ *  8 2 4
+ *  2 4 4
+ */
+TEST_CASE("game over is false when can move") {
+  entity::Board board(3, 3, {4, 8, 2, 8, 2, 4, 2, 4, 4});
+  REQUIRE_EQ(board.isGameOver(), false);
+}
+
+/*
+ *  4  2  8  2
+ *  2  8  64 4
+ *  8  32 4  2
+ *  2  8  2  4
+ */
+TEST_CASE("Game over is true") {
+  entity::Board board(4, 4, {4, 2, 8, 2, 2, 8, 64, 4, 8, 32, 4, 2, 2, 8, 2, 4});
+  REQUIRE_EQ(board.isGameOver(), true);
 }
 
 /*
@@ -592,7 +624,7 @@ TEST_CASE("Can not move") {
  *  0 2 2 0 0          0 0 0 0 4
  */
 TEST_CASE("Board of 4 rows and 5 cols") {
-  entity::Board board{4, 5};
+  entity::Board board{4, 5, {}};
   addCells(board);
   const common::SwipeAction expectedAction{
       {
@@ -625,46 +657,4 @@ TEST_CASE("Board of 4 rows and 5 cols") {
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
   REQUIRE_EQ(board.content(), common::Values{0, 0, 0, 8, 8, 0, 0, 0, 4, 8,
                                              0, 0, 0, 2, 4, 0, 0, 0, 0, 4});
-}
-
-/*
- *  4 8 2
- *  8 0 4
- *  2 4 8
- */
-TEST_CASE("Not game over") {
-  entity::Board board(3, 3);
-  const std::vector<Cell> cells{{{0, 0}, 4}, {{0, 1}, 8}, {{0, 2}, 2},
-                                {{1, 0}, 8}, {{1, 1}, 0}, {{1, 2}, 4},
-                                {{2, 0}, 2}, {{2, 1}, 4}, {{2, 2}, 8}};
-  addCells(board, cells);
-  REQUIRE_EQ(board.isGameOver(), false);
-}
-
-/*
- *  4 8 2
- *  8 2 4
- *  2 4 4
- */
-TEST_CASE("Not game over") {
-  entity::Board board(3, 3);
-  const std::vector<Cell> cells{{{0, 0}, 4}, {{0, 1}, 8}, {{0, 2}, 2},
-                                {{1, 0}, 8}, {{1, 1}, 2}, {{1, 2}, 4},
-                                {{2, 0}, 2}, {{2, 1}, 4}, {{2, 2}, 4}};
-  addCells(board, cells);
-  REQUIRE_EQ(board.isGameOver(), false);
-}
-
-/*
- *  4 8 2
- *  8 2 4
- *  2 4 8
- */
-TEST_CASE("Game over") {
-  entity::Board board(3, 3);
-  const std::vector<Cell> cells{{{0, 0}, 4}, {{0, 1}, 8}, {{0, 2}, 2},
-                                {{1, 0}, 8}, {{1, 1}, 2}, {{1, 2}, 4},
-                                {{2, 0}, 2}, {{2, 1}, 4}, {{2, 2}, 8}};
-  addCells(board, cells);
-  REQUIRE_EQ(board.isGameOver(), true);
 }

@@ -9,7 +9,8 @@ namespace entity {
 
 class Board {
  public:
-  Board(common::Index rows, common::Index cols);
+  Board(common::Index rows, common::Index cols,
+        common::Values initialValues = {});
   ~Board();
 
   common::Index getRows() const;
