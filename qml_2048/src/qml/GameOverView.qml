@@ -1,15 +1,17 @@
 import QtQuick 2.0
 
 Rectangle {
-    id: gameOverRect
+    id: gameOverView
     width: 380
     height: 380
-    radius: 3;
-    visible: false;
+    radius: 3
+    visible: false
     opacity: 0.0
     color: "#bbada0"
 
     property alias animateOpacity: animateOpacity
+
+    signal newGameButtonClicked
 
     anchors {
         right: parent.right; rightMargin: 5
@@ -57,14 +59,14 @@ Rectangle {
             font.pixelSize: 21
         }
         MouseArea {
-            anchors.fill: parent;
-            onClicked: Logic.restart();
+            anchors.fill: parent
+            onClicked: gameOverView.newGameButtonClicked();
         }
     }
 
     NumberAnimation {
         id: animateOpacity
-        target: gameOverRect
+        target: gameOverView
         properties: "opacity"
         from: 0.00
         to: 0.80

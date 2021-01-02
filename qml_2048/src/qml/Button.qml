@@ -7,8 +7,8 @@ Rectangle {
     color: "#8c7963"
     radius: 3
 
-    signal clicked;
     property string label: "";
+    signal clicked;
 
     Text {
         x: 18

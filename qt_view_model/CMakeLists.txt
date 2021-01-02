@@ -7,9 +7,11 @@ set(CMAKE_AUTOMOC ON)
 
 add_library(
   qt_view_model
+  include/qt_view_model/Controller.h
   include/qt_view_model/BoardViewModel.h
   include/qt_view_model/GameOverViewModel.h
   include/qt_view_model/ScoreViewModel.h
+  src/Controller.cpp
   src/BoardViewModel.cpp
   src/GameOverViewModel.cpp
   src/ScoreViewModel.cpp)

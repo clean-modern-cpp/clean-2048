@@ -13,16 +13,16 @@ class ScoreViewModel : public QObject, presenter::ScorePresenterDelegate {
   Q_OBJECT
 
  public:
-  Q_PROPERTY(int score MEMBER score NOTIFY scoreChanged)
-  Q_PROPERTY(int bestScore MEMBER bestScore NOTIFY bestScoreChanged)
+  Q_PROPERTY(int score MEMBER scoreCache NOTIFY scoreChanged)
+  Q_PROPERTY(int bestScore MEMBER bestScoreCache NOTIFY bestScoreChanged)
 
   explicit ScoreViewModel(QObject* parent = nullptr);
 
-  void present(int s, int bs) override {
+  void present(int score, int bestScore) override {
     spdlog::info("present score: {}, {}", score, bestScore);
-    score = s;
+    scoreCache = score;
+    bestScoreCache = bestScore;
     emit scoreChanged(score);
-    bestScore = bs;
     emit bestScoreChanged(bestScore);
   }
 
@@ -33,8 +33,8 @@ class ScoreViewModel : public QObject, presenter::ScorePresenterDelegate {
  private:
   presenter::ScorePresenter scorePresenter;
 
-  int score = 0;
-  int bestScore = 0;
+  int scoreCache = 0;
+  int bestScoreCache = 0;
 };
 
 }  // namespace qt_view_model

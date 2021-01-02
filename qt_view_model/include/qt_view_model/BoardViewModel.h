@@ -9,7 +9,6 @@
 #include <QString>
 #include <QTimer>
 #include <unordered_map>
-#include <vector>
 
 #include "common/ModelHelper.h"
 #include "presenter/BoardPresenter.h"
@@ -20,14 +19,17 @@ namespace qt_view_model {
 class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
   Q_OBJECT
 
- public:
-  Q_PROPERTY(int rows MEMBER rows NOTIFY rowsChanged)
-  Q_PROPERTY(int columns MEMBER columns NOTIFY columnChanged)
+  Q_PROPERTY(int rows MEMBER rowsCache NOTIFY rowsChanged)
+  Q_PROPERTY(int cols MEMBER colsCache NOTIFY colsChanged)
 
+ public:
   explicit BoardViewModel(QObject* parent = nullptr);
 
-  void initWithDimension(int row, int col) override {
-    spdlog::info("row: {}, col: {}", row, col);
+  void initWithDimension(int rows, int cols) override {
+    spdlog::info("initWithDimension: rows: {}, cols: {}", rows, cols);
+    rowsCache = rows;
+    colsCache = cols;
+    emit initWith(rows, cols);
   }
 
   void present(common::Actions actions) override {
@@ -49,25 +51,27 @@ class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
     });
   }
 
-  Q_INVOKABLE void restart() { controller.newGame(); }
-
-  Q_INVOKABLE void swipe(int key) { controller.swipe(directionMap.at(key)); }
+  Q_INVOKABLE void swipe(int key) {
+    if (directionMap.find(key) != directionMap.end()) {
+      controller.swipe(directionMap.at(key));
+    }
+  }
 
  signals:
-  void rowsChanged();
-  void columnChanged();
-
+  void rowsChanged(int rows);
+  void colsChanged(int cols);
+  void initWith(int rows, int cols);
   void newCell(int row, int col, QString value);
   void startCellMove(int fromRow, int fromCol, int toRow, int toCol);
   void completeCellMove(int fromRow, int fromCol, int toRow, int toCol);
   void mergeCell(int row, int col, QString toValue);
 
  private:
-  int rows = 4;
-  int columns = 4;
-
   presenter::Controller controller;
   presenter::BoardPresenter boardPresenter;
+
+  int rowsCache = 0;
+  int colsCache = 0;
 
   inline static const std::unordered_map<int, common::Direction> directionMap{
       {Qt::Key_Left, common::Direction::left},
@@ -75,7 +79,7 @@ class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
       {Qt::Key_Up, common::Direction::up},
       {Qt::Key_Down, common::Direction::down},
   };
-};  // namespace qt_view_model
+};
 
 }  // namespace qt_view_model
 

@@ -21,12 +21,16 @@ Rectangle {
     Grid {
         id: grid
         anchors.fill: parent
+
+        property var rows
+        property var cols
+
         Repeater {
-            model: boardViewModel.rows * boardViewModel.columns
+            model: grid.rows * grid.cols
 
             Rectangle {
-                height: grid.height / boardViewModel.rows
-                width: grid.width / boardViewModel.columns
+                height: grid.height / grid.rows
+                width: grid.width / grid.cols
                 color: "transparent";
                 Rectangle {
                     color: "#ccc0b2"
@@ -46,16 +50,6 @@ Rectangle {
         }
     }
 
-    Component.onCompleted: {
-        for (var i = 0; i < boardViewModel.rows; ++i) {
-            cells[i] = []
-            for (var j = 0; j < boardViewModel.columns; ++j) {
-                cells[i][j] = 0
-            }
-        }
-        boardViewModel.restart();
-    }
-
     Keys.onPressed: {
         boardViewModel.swipe(event.key);
     }
@@ -68,6 +62,24 @@ Rectangle {
 
     Connections {
         target: boardViewModel
+
+        function onInitWith(rows, cols) {
+            for (var i = 0; i < cells.length; ++i) {
+                for (var j = 0; j < cells[i].length; ++j) {
+                    if (cells[i][j] != 0) {
+                        cells[i][j].destroy();
+                    }
+                }
+            }
+            grid.rows = rows
+            grid.cols = cols
+            for (var i = 0; i < rows; ++i) {
+                cells[i] = []
+                for (var j = 0; j < cols; ++j) {
+                    cells[i][j] = 0
+                }
+            }
+        }
 
         function onNewCell(row, col, value) {
             var component = Qt.createComponent("Cell.qml");

@@ -7,10 +7,7 @@ Rectangle {
     height: 100
     color: "#fbfaef"
 
-    property int score: 0;
-    property int bestScore: 0
-
-    signal optionsClicked;
+    signal newGameButtonClicked
 
     ScoreViewModel {
         id: scoreViewModel
@@ -99,22 +96,12 @@ Rectangle {
         }
     }
 
-    CustomBtn {
-        id: btnNewGame
+    Button {
+        id: newGameButton
         x: 265
         y: 63
         label: qsTr("New Game")
 
-        onClicked: {
-        }
-    }
-
-    CustomBtn {
-        id: btnOptions
-        x: 150
-        y: 63
-        label: qsTr("Options");
-
-        onClicked: scoreBoard.optionsClicked();
+        onClicked: scoreBoard.newGameButtonClicked();
     }
 }
