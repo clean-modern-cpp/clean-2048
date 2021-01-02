@@ -10,7 +10,6 @@ class BoardPresenter : public common::NonCopyable {
  public:
   virtual void initWithDimension(int row, int column) = 0;
   virtual void present(common::Actions actions) = 0;
-  virtual void clearAllCells() = 0;
 };
 
 void setBoardPresenter(BoardPresenter* presenter);

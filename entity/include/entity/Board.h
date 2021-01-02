@@ -10,7 +10,8 @@ namespace entity {
 class Board {
  public:
   Board();
-  Board(common::Index rows, common::Index cols, common::NewActions newActions);
+  Board(common::Index rows, common::Index cols,
+        const common::NewActions& newActions);
   ~Board();
 
   Board(Board&&);

@@ -6,14 +6,12 @@
 
 namespace use_case {
 
-class GamePlayUseCase : public common::NonCopyable {
+class GamePlay : public common::NonCopyable {
  public:
-  virtual void newGame() = 0;
-  virtual void startGame() = 0;
   virtual void swipe(common::Direction direction) = 0;
 };
 
-GamePlayUseCase* getGamePlayUseCase();
+GamePlay* getGamePlay();
 
 }  // namespace use_case
 

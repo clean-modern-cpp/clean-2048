@@ -1,23 +1,22 @@
 #ifndef CLEAN2048_USECASE_GAME_H_
 #define CLEAN2048_USECASE_GAME_H_
 
-#include <spdlog/spdlog.h>
-
+#include <cassert>
 #include <memory>
 
 #include "RandomImpl.h"
 #include "common/Model.h"
 #include "use_case/BoardPresenter.h"
 #include "use_case/GameOverPresenter.h"
-#include "use_case/GamePlayUseCase.h"
-#include "use_case/GameStorageUseCase.h"
+#include "use_case/GamePlay.h"
+#include "use_case/GameStorage.h"
 #include "use_case/ScorePresenter.h"
 #include "use_case/Storage.h"
 
 namespace use_case {
 
 template <typename Board, typename Score>
-class Game : public GamePlayUseCase, public GameStorageUseCase {
+class Game : public GameStorage, public GamePlay {
  public:
   Game() : random{std::make_unique<RandomImpl>()} {}
 
@@ -35,13 +34,9 @@ class Game : public GamePlayUseCase, public GameStorageUseCase {
   void setStorage(std::unique_ptr<Storage> s) { storage = std::move(s); }
 
   void newGame() override {
+    assert(boardPresenter && "Board presenter is null");
     board.clear();
-    if (boardPresenter) {
-      boardPresenter->clearAllCells();
-      boardPresenter->initWithDimension(board.getRows(), board.getCols());
-    } else {
-      spdlog::warn("Board presenter is nullptr");
-    }
+    boardPresenter->initWithDimension(board.getRows(), board.getCols());
 
     common::Actions actions;
     actions.newActions.emplace_back(newCell());
@@ -49,11 +44,21 @@ class Game : public GamePlayUseCase, public GameStorageUseCase {
     presentAll(actions);
   }
 
-  void startGame() override {
-    if (boardPresenter) {
-      boardPresenter->initWithDimension(board.getRows(), board.getCols());
+  void loadGame() override {
+    assert(boardPresenter && "Board presenter is null");
+    assert(storage && "Storage is null");
+    const auto gameData = storage->loadGame();
+    if (gameData.isGameOver) {
+      newGame();
     } else {
-      spdlog::warn("Board presenter is nullptr");
+      score = Score{gameData.score, gameData.bestScore};
+      board = Board{gameData.rows, gameData.cols, gameData.newActions};
+      boardPresenter->initWithDimension(board.getRows(), board.getCols());
+      presentAll({
+          {},
+          {},
+          std::move(gameData.newActions),
+      });
     }
   }
 
@@ -68,13 +73,10 @@ class Game : public GamePlayUseCase, public GameStorageUseCase {
   }
 
   void saveGame() override {
-    if (storage) {
-      // storage->saveScore({score.getScore(), score.getBestScore()});
-      // storage->saveBoard(
-      //     {board.getRows(), board.getCols(), board.restoreActions()});
-    } else {
-      spdlog::warn("Storage is nullptr");
-    }
+    assert(storage && "Storage is null");
+    storage->saveGame({score.getBestScore(), score.getScore(),
+                       board.isGameOver(), board.getRows(), board.getCols(),
+                       board.restoreActions()});
   }
 
  private:
@@ -94,15 +96,6 @@ class Game : public GamePlayUseCase, public GameStorageUseCase {
       assert(gameOverPresenter);
       gameOverPresenter->present();
     }
-  }
-
-  common::NewActions loadGame() {
-    assert(storage);
-    // const auto scoreStorage = storage->loadScore();
-    // score = Score{scoreStorage.score, scoreStorage.bestScore};
-    // const auto boardStorage = storage->loadBoard();
-    // board =
-    //     Board{boardStorage.rows, boardStorage.cols, boardStorage.newActions};
   }
 
   Board board;

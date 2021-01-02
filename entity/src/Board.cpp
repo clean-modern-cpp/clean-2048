@@ -7,7 +7,8 @@ namespace entity {
 
 class Board::Impl {
  public:
-  Impl(common::Index rows, common::Index cols, common::NewActions newActions)
+  Impl(common::Index rows, common::Index cols,
+       const common::NewActions& newActions)
       : rows{rows}, cols{cols}, values(rows * cols, empty) {
     for (const auto& [pos, value] : newActions) {
       assert(pos.row >= 0 && pos.row < rows && pos.col >= 0 && pos.col < cols);
@@ -147,7 +148,7 @@ class Board::Impl {
 Board::Board() : Board{0, 0, {}} {}
 
 Board::Board(common::Index rows, common::Index cols,
-             common::NewActions newActions)
+             const common::NewActions& newActions)
     : impl{std::make_unique<Impl>(rows, cols, newActions)} {}
 
 Board::~Board() = default;

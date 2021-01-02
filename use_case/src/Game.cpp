@@ -2,17 +2,14 @@
 
 #include "entity/Board.h"
 #include "entity/Score.h"
-#include "use_case/BoardPresenter.h"
-#include "use_case/Random.h"
-#include "use_case/Storage.h"
 
 namespace use_case {
 
 Game<entity::Board, entity::Score> game;
 
-GamePlayUseCase* getGamePlayUseCase() { return &game; }
+GamePlay* getGamePlay() { return &game; }
 
-GameStorageUseCase* getGameStorageUseCase() { return &game; }
+GameStorage* getGameStorage() { return &game; }
 
 void setBoardPresenter(BoardPresenter* presenter) {
   game.setBoardPresenter(presenter);

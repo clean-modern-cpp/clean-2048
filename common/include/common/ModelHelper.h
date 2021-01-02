@@ -2,6 +2,7 @@
 #define CLEAN2048_COMMON_MODELHELPER_H_
 
 #include <ostream>
+#include <unordered_map>
 #include <unordered_set>
 
 #include "common/Model.h"
@@ -68,6 +69,18 @@ inline bool operator==(const Actions &lhs, const Actions &rhs) {
 namespace std {
 
 inline std::ostream &operator<<(std::ostream &os,
+                                const common::Direction &direction) {
+  static const std::unordered_map<common::Direction, std::string> directionMap{
+      {common::Direction::left, "left"},
+      {common::Direction::right, "right"},
+      {common::Direction::up, "up"},
+      {common::Direction::down, "down"},
+  };
+  os << directionMap.at(direction);
+  return os;
+}
+
+inline std::ostream &operator<<(std::ostream &os,
                                 const common::Position &position) {
   os << "{" << position.row << ", " << position.col << "}";
   return os;
@@ -99,22 +112,22 @@ inline std::ostream &operator<<(std::ostream &os, const std::vector<T> &set) {
     os << (first ? "" : ", ") << t;
     first = false;
   }
-  os << "]\n";
+  os << "]";
   return os;
 }
 
 inline std::ostream &operator<<(std::ostream &os,
                                 const common::SwipeAction &action) {
   os << "{\n  moveActions: " << action.moveActions
-     << "  mergeActions: " << action.mergeActions << "}";
+     << "\n  mergeActions: " << action.mergeActions << "\n}";
   return os;
 }
 
 inline std::ostream &operator<<(std::ostream &os,
                                 const common::Actions &actions) {
   os << "{\n  moveActions: " << actions.moveActions
-     << "  mergeActions: " << actions.mergeActions
-     << "  newActions: " << actions.newActions << "}";
+     << "\n  mergeActions: " << actions.mergeActions
+     << "\n  newActions: " << actions.newActions << "\n}";
   return os;
 }
 

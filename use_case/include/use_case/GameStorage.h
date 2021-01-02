@@ -5,12 +5,14 @@
 
 namespace use_case {
 
-class GameStorageUseCase : public common::NonCopyable {
+class GameStorage : public common::NonCopyable {
  public:
+  virtual void newGame() = 0;
+  virtual void loadGame() = 0;
   virtual void saveGame() = 0;
 };
 
-GameStorageUseCase* getGameStorageUseCase();
+GameStorage* getGameStorage();
 
 }  // namespace use_case
 
