@@ -3,6 +3,6 @@ target_include_directories(use_case PUBLIC include)
 target_link_libraries(
   use_case
   PUBLIC common
-  PRIVATE entity)
+  PRIVATE spdlog entity)
 
 add_subdirectory(tests)

@@ -22,7 +22,7 @@ class Board::Impl {
     common::Positions positions;
     for (auto index = 0; index < totalSizeOfMatrix(); ++index) {
       if (values[index] == empty) {
-        positions.push_back(positionOf(index));
+        positions.emplace_back(positionOf(index));
       }
     }
     return positions;

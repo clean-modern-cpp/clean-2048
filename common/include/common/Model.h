@@ -15,8 +15,6 @@ enum class Direction { left, right, up, down };
 struct Position {
   Index row;
   Index col;
-
-  Position(Index row, Index col) : row{row}, col{col} {}
 };
 
 inline bool operator==(const Position& lhs, const Position& rhs) {
@@ -32,7 +30,7 @@ struct MoveAction {
   Position from;
   Position to;
 
-  MoveAction(Position from, Position to) : from{from}, to{to} {}
+  MoveAction(Position from = {}, Position to = {}) : from{from}, to{to} {}
 };
 
 inline bool operator==(const MoveAction& lhs, const MoveAction& rhs) {
@@ -45,7 +43,7 @@ struct MergeAction {
   Position pos;
   Value toValue;
 
-  MergeAction(Position pos, Value toValue) : pos{pos}, toValue{toValue} {}
+  MergeAction(Position pos = {}, Value value = 0) : pos{pos}, toValue{value} {}
 };
 
 inline bool operator==(const MergeAction& lhs, const MergeAction& rhs) {
@@ -58,8 +56,7 @@ struct NewAction {
   Position pos;
   Value value;
 
-  NewAction() : pos(0, 0), value(0) {}
-  NewAction(Position pos, Value value) : pos{pos}, value{value} {}
+  NewAction(Position pos = {}, Value value = 0) : pos{pos}, value{value} {}
 };
 
 inline bool operator==(const NewAction& lhs, const NewAction& rhs) {

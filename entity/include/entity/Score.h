@@ -20,6 +20,7 @@ class Score {
   int getBestScore() const;
 
   void update(const common::SwipeAction& action);
+  void reset();
 
  private:
   class Impl;

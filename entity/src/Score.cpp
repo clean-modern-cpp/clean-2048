@@ -20,6 +20,8 @@ class Score::Impl {
     bestScore = std::max(bestScore, score);
   }
 
+  void reset() { score = 0; }
+
  private:
   int score = 0;
   int bestScore = 0;
@@ -39,5 +41,7 @@ int Score::getScore() const { return impl->getScore(); }
 int Score::getBestScore() const { return impl->getBestScore(); }
 
 void Score::update(const common::SwipeAction& action) { impl->update(action); }
+
+void Score::reset() { impl->reset(); }
 
 }  // namespace entity

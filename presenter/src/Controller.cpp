@@ -1,18 +1,18 @@
 #include "presenter/Controller.h"
 
-#include "use_case/GamePlay.h"
+#include "use_case/GamePlayUseCase.h"
 
 namespace presenter {
 
 class Controller::Impl {
  public:
-  Impl() : gamePlay{use_case::getGamePlay()} {}
+  Impl() : gamePlayUseCase{use_case::getGamePlayUseCase()} {}
 
-  void newGame() { gamePlay->newGame(); }
-  void swipe(common::Direction d) { gamePlay->swipe(d); }
+  void newGame() { gamePlayUseCase->newGame(); }
+  void swipe(common::Direction d) { gamePlayUseCase->swipe(d); }
 
  private:
-  use_case::GamePlay* gamePlay;
+  use_case::GamePlayUseCase* gamePlayUseCase;
 };
 
 Controller::Controller() : impl(std::make_unique<Impl>()) {}

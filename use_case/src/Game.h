@@ -1,6 +1,8 @@
 #ifndef CLEAN2048_USECASE_GAME_H_
 #define CLEAN2048_USECASE_GAME_H_
 
+#include <spdlog/spdlog.h>
+
 #include <memory>
 
 #include "RandomImpl.h"
@@ -13,9 +15,6 @@
 #include "use_case/Storage.h"
 
 namespace use_case {
-
-constexpr common::Index rows = 4;
-constexpr common::Index cols = 4;
 
 template <typename Board, typename Score>
 class Game : public GamePlayUseCase, public GameStorageUseCase {
@@ -37,20 +36,25 @@ class Game : public GamePlayUseCase, public GameStorageUseCase {
 
   void newGame() override {
     board.clear();
-
-    assert(boardPresenter);
-    boardPresenter->initWithDimension(4, 4);
-    boardPresenter->presentClear();
+    if (boardPresenter) {
+      boardPresenter->clearAllCells();
+      boardPresenter->initWithDimension(board.getRows(), board.getCols());
+    } else {
+      spdlog::warn("Board presenter is nullptr");
+    }
 
     common::Actions actions;
-    actions.newActions.push_back(newCell());
-    actions.newActions.push_back(newCell());
+    actions.newActions.emplace_back(newCell());
+    actions.newActions.emplace_back(newCell());
     presentAll(actions);
   }
 
   void startGame() override {
-    assert(boardPresenter);
-    boardPresenter->initWithDimension(4, 4);
+    if (boardPresenter) {
+      boardPresenter->initWithDimension(board.getRows(), board.getCols());
+    } else {
+      spdlog::warn("Board presenter is nullptr");
+    }
   }
 
   void swipe(common::Direction direction) override {
@@ -64,10 +68,13 @@ class Game : public GamePlayUseCase, public GameStorageUseCase {
   }
 
   void saveGame() override {
-    assert(storage);
-    storage->saveScore({score.getScore(), score.getBestScore()});
-    storage->saveBoard(
-        {board.getRows(), board.getCols(), board.restoreActions()});
+    if (storage) {
+      // storage->saveScore({score.getScore(), score.getBestScore()});
+      // storage->saveBoard(
+      //     {board.getRows(), board.getCols(), board.restoreActions()});
+    } else {
+      spdlog::warn("Storage is nullptr");
+    }
   }
 
  private:
@@ -91,11 +98,11 @@ class Game : public GamePlayUseCase, public GameStorageUseCase {
 
   common::NewActions loadGame() {
     assert(storage);
-    const auto scoreStorage = storage->loadScore();
-    score = Score{scoreStorage.score, scoreStorage.bestScore};
-    const auto boardStorage = storage->loadBoard();
-    board =
-        Board{boardStorage.rows, boardStorage.cols, boardStorage.newActions};
+    // const auto scoreStorage = storage->loadScore();
+    // score = Score{scoreStorage.score, scoreStorage.bestScore};
+    // const auto boardStorage = storage->loadBoard();
+    // board =
+    //     Board{boardStorage.rows, boardStorage.cols, boardStorage.newActions};
   }
 
   Board board;

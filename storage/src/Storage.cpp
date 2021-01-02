@@ -6,24 +6,43 @@
 #include <fstream>
 #include <string>
 
+namespace storage::key {
+
+const std::string row = "row";
+const std::string col = "col";
+const std::string pos = "pos";
+const std::string value = "value";
+
+}  // namespace storage::key
+
 namespace YAML {
 
 template <>
-struct convert<common::NewAction> {
-  static Node encode(const common::NewAction& newAction) {
-    Node node(NodeType::Sequence);
-    node.push_back(newAction.pos.row);
-    node.push_back(newAction.pos.col);
-    node.push_back(newAction.value);
+struct convert<common::Position> {
+  static Node encode(const common::Position& pos) {
+    Node node;
+    node[storage::key::row] = pos.row;
+    node[storage::key::col] = pos.col;
     return node;
   }
-  static bool decode(const Node& node, common::NewAction& newAction) {
-    if (!node.IsSequence() || node.size() != 3) {
-      return false;
-    }
-    newAction.pos.row = node[0].as<common::Index>();
-    newAction.pos.col = node[1].as<common::Index>();
-    newAction.value = node[2].as<common::Value>();
+  static bool decode(const Node& node, common::Position& pos) {
+    pos.row = node[storage::key::row].as<common::Index>();
+    pos.col = node[storage::key::col].as<common::Index>();
+    return true;
+  }
+};
+
+template <>
+struct convert<common::NewAction> {
+  static Node encode(const common::NewAction& action) {
+    Node node;
+    node[storage::key::pos] = action.pos;
+    node[storage::key::value] = action.value;
+    return node;
+  }
+  static bool decode(const Node& node, common::NewAction& action) {
+    action.pos = node[storage::key::pos].as<common::Position>();
+    action.value = node[storage::key::value].as<common::Value>();
     return true;
   }
 };
@@ -32,70 +51,47 @@ struct convert<common::NewAction> {
 
 namespace storage {
 
-const std::string scoreFileName = "score.yaml";
-const std::string boardFileName = "board.yaml";
+const std::string fileName = "game.yaml";
 
 namespace key {
 
-const std::string score = "score";
 const std::string bestScore = "bestScore";
+const std::string score = "score";
+const std::string isGameOver = "isGameOver";
 const std::string rows = "rows";
 const std::string cols = "cols";
 const std::string newActions = "newActions";
 
 }  // namespace key
 
-constexpr int initialScore = 0;
-constexpr int initialBestScore = 0;
-
-constexpr int initialRows = 4;
-constexpr int initialCols = 4;
-
-use_case::ScoreData Storage::loadScore() {
+use_case::GameData Storage::loadGame() {
   try {
-    YAML::Node scoreNode = YAML::LoadFile(scoreFileName);
-    use_case::ScoreData scoreData;
-    scoreData.score = scoreNode[key::score].as<int>();
-    scoreData.bestScore = scoreNode[key::bestScore].as<int>();
-    return scoreData;
-  } catch (const std::exception&) {
-    return {initialScore, initialBestScore};
+    YAML::Node node = YAML::LoadFile(fileName);
+    use_case::GameData gameData;
+    gameData.bestScore = node[key::bestScore].as<int>();
+    gameData.score = node[key::score].as<int>();
+    gameData.isGameOver = node[key::isGameOver].as<bool>();
+    gameData.rows = node[key::rows].as<common::Index>();
+    gameData.cols = node[key::cols].as<common::Index>();
+    gameData.newActions = node[key::newActions].as<common::NewActions>();
+    return gameData;
+  } catch (const std::exception& e) {
+    return {};
   }
 }
 
-use_case::BoardData Storage::loadBoard() {
-  try {
-    YAML::Node boardNode = YAML::LoadFile(boardFileName);
-    use_case::BoardData boardData;
-    boardData.rows = boardNode[key::rows].as<common::Index>();
-    boardData.cols = boardNode[key::cols].as<common::Index>();
-    boardData.newActions = boardNode[key::newActions].as<common::NewActions>();
-    return boardData;
-  } catch (const std::exception&) {
-    return {initialRows, initialCols, {}};
-  }
+void Storage::saveGame(const use_case::GameData& gameData) {
+  YAML::Node node;
+  node[key::bestScore] = gameData.bestScore;
+  node[key::score] = gameData.score;
+  node[key::isGameOver] = gameData.isGameOver;
+  node[key::rows] = gameData.rows;
+  node[key::cols] = gameData.cols;
+  node[key::newActions] = gameData.newActions;
+  std::ofstream ofs{fileName};
+  ofs << node;
 }
 
-void Storage::saveScore(const use_case::ScoreData& scoreData) {
-  YAML::Node scoreNode;
-  scoreNode[key::score] = scoreData.score;
-  scoreNode[key::bestScore] = scoreData.bestScore;
-  std::ofstream ofs{scoreFileName};
-  ofs << scoreNode;
-}
-
-void Storage::saveBoard(const use_case::BoardData& boardData) {
-  YAML::Node boardNode;
-  boardNode[key::rows] = boardData.rows;
-  boardNode[key::cols] = boardData.cols;
-  boardNode[key::newActions] = boardData.newActions;
-  std::ofstream ofs{boardFileName};
-  ofs << boardNode;
-}
-
-void Storage::clear() {
-  std::filesystem::remove(scoreFileName);
-  std::filesystem::remove(boardFileName);
-}
+void Storage::clear() { std::filesystem::remove(fileName); }
 
 }  // namespace storage

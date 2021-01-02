@@ -26,13 +26,15 @@ class RandomMockup : public use_case::Random {
 template <bool GameOver>
 class BoardMockup {
  public:
-  BoardMockup(common::Index, common::Index) {}
-
-  void clear() { oss << "Board::clear()\n"; }
-  bool isGameOver() const {
-    oss << "Board::isGameOver() -> " << GameOver << "\n";
-    return GameOver;
+  common::Index getRows() const {
+    oss << "Board::getRows()\n";
+    return 4;
   }
+  common::Index getCols() const {
+    oss << "Board::getCols()\n";
+    return 4;
+  }
+
   common::Positions emptyPositions() const {
     oss << "Board::emptyPositions()";
     auto positions =
@@ -43,6 +45,11 @@ class BoardMockup {
     oss << " -> " << positions;
     return positions;
   }
+  bool isGameOver() const {
+    oss << "Board::isGameOver() -> " << GameOver << "\n";
+    return GameOver;
+  }
+  void clear() { oss << "Board::clear()\n"; }
   common::NewAction addCell(common::Position pos, common::Value value) {
     oss << "Board::addCell(" << pos << ", " << value << "})\n";
     return {pos, value};
@@ -57,6 +64,10 @@ class BoardMockup {
             {{2, 2}, 8},
         },
     };
+  }
+  common::NewActions restoreActions() const {
+    oss << "Board::restoreActions()\n";
+    return {};
   }
 
  private:
@@ -86,6 +97,7 @@ class BoardPresenterMockup : public use_case::BoardPresenter {
   void present(common::Actions actions) override {
     oss << "BoardPresenter::present(" << actions << ")\n";
   }
+  void clearAllCells() override { oss << "BoardPresenter::clearAllCells()\n"; }
 };
 
 class ScorePresenterMockup : public use_case::ScorePresenter {

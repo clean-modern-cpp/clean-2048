@@ -7,11 +7,9 @@ namespace storage {
 
 class Storage : public use_case::Storage {
  public:
-  use_case::ScoreData loadScore() override;
-  use_case::BoardData loadBoard() override;
+  use_case::GameData loadGame() override;
 
-  void saveScore(const use_case::ScoreData& scoreData) override;
-  void saveBoard(const use_case::BoardData& boardData) override;
+  void saveGame(const use_case::GameData& gameData) override;
 
   void clear() override;
 };

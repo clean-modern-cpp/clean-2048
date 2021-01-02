@@ -8,33 +8,26 @@
 
 namespace use_case {
 
-struct ScoreData {
-  int score;
-  int bestScore;
-};
-
-inline bool operator==(const ScoreData& lhs, const ScoreData& rhs) {
-  return lhs.score == rhs.score && lhs.bestScore == rhs.bestScore;
-}
-
-struct BoardData {
+struct GameData {
+  int bestScore = 0;
+  int score = 0;
+  bool isGameOver = true;
   common::Index rows;
   common::Index cols;
   common::NewActions newActions;
 };
 
-inline bool operator==(const BoardData& lhs, const BoardData& rhs) {
-  return lhs.rows == rhs.rows && lhs.cols && lhs.cols == rhs.cols &&
-         lhs.newActions == rhs.newActions;
+inline bool operator==(const GameData& lhs, const GameData& rhs) {
+  return lhs.bestScore == rhs.bestScore && lhs.score == rhs.score &&
+         lhs.isGameOver == rhs.isGameOver && lhs.rows == rhs.rows &&
+         lhs.cols == rhs.cols && lhs.newActions == rhs.newActions;
 }
 
 class Storage : public common::NonCopyable {
  public:
-  virtual ScoreData loadScore() = 0;
-  virtual BoardData loadBoard() = 0;
+  virtual GameData loadGame() = 0;
 
-  virtual void saveScore(const ScoreData& scoreData) = 0;
-  virtual void saveBoard(const BoardData& boardData) = 0;
+  virtual void saveGame(const GameData& gameData) = 0;
 
   virtual void clear() = 0;
 };
