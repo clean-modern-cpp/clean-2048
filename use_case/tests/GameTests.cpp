@@ -182,6 +182,8 @@ TEST_CASE("New game") {
   Tester<false> tester;
   tester.game.newGame();
   REQUIRE_EQ(oss.str(), R"(Board::Board()
+Score::getBestScore() -> 100
+Score::Score(0, 100)
 Board::getRows() -> 4
 Board::getCols() -> 4
 BoardPresenter::initWithDimension(4, 4)
@@ -210,8 +212,8 @@ TEST_CASE("Load game") {
   tester.game.loadGame();
   REQUIRE_EQ(oss.str(),
              R"(Storage::loadGame() -> {100, 10, 0, 4, 4, [{{0, 1}, 2}]}
-Score::Score(10, 100)
 Board::Board(4, 4, [{{0, 1}, 2}])
+Score::Score(10, 100)
 Board::getRows() -> 4
 Board::getCols() -> 4
 BoardPresenter::initWithDimension(4, 4)
@@ -232,6 +234,8 @@ TEST_CASE("Load game when game is over") {
   tester.game.loadGame();
   REQUIRE_EQ(oss.str(), R"(Storage::loadGame() -> {0, 0, 1, 0, 0, []}
 Board::Board()
+Score::getBestScore() -> 100
+Score::Score(0, 100)
 Board::getRows() -> 4
 Board::getCols() -> 4
 BoardPresenter::initWithDimension(4, 4)

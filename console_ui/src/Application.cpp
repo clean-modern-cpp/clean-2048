@@ -25,7 +25,11 @@ class Application::Impl : public presenter::GameOverPresenterDelegate {
     while (true) {
       show();
       const auto input = getInput();
-      if (input == "q") {
+      if (isGameOver || input == "n") {
+        isGameOver = false;
+        controller.newGame();
+      } else if (input == "q") {
+        controller.saveGame();
         break;
       } else if (!input.empty() &&
                  directionMap.find(input[0]) != directionMap.end()) {
@@ -42,10 +46,12 @@ class Application::Impl : public presenter::GameOverPresenterDelegate {
     std::cout << boardView.body();
 
     if (isGameOver) {
+      std::cout << "Game Over!\n";
+      std::cout << "Press any key to continue:\n";
     } else {
       std::cout << "Please input:\n";
       std::cout << "  - l: Left, r: Right, u: up, d: Down\n";
-      std::cout << "  - q: Quit\n";
+      std::cout << "  - n: New game, q: Quit\n";
       std::cout << std::endl;
     }
   }

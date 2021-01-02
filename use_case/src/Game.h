@@ -36,6 +36,7 @@ class Game : public GameStorage, public GamePlay {
   void newGame() override {
     assert(boardPresenter && "Board presenter is null");
     board = Board{};
+    score = Score{0, score.getBestScore()};
     boardPresenter->initWithDimension(board.getRows(), board.getCols());
 
     common::Actions actions;
@@ -51,8 +52,8 @@ class Game : public GameStorage, public GamePlay {
     if (gameData.isGameOver) {
       newGame();
     } else {
-      score = Score{gameData.score, gameData.bestScore};
       board = Board{gameData.rows, gameData.cols, gameData.newActions};
+      score = Score{gameData.score, gameData.bestScore};
       boardPresenter->initWithDimension(board.getRows(), board.getCols());
       presentAll({
           {},

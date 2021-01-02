@@ -45,6 +45,7 @@ include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
 add_compile_options(-Wall -Werror -Wextra -pedantic)
 
 add_subdirectory(common)
+add_subdirectory(console_2048)
 add_subdirectory(console_ui)
 add_subdirectory(entity)
 add_subdirectory(presenter)
