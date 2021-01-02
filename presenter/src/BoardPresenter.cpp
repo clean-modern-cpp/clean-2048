@@ -13,7 +13,7 @@ class BoardPresenter::Impl : public use_case::BoardPresenter {
 
   void initWithDimension(int row, int column) override {
     if (delegate) {
-      delegate->intiWithDimension(row, column);
+      delegate->initWithDimension(row, column);
     }
   }
   void present(common::Actions actions) override {

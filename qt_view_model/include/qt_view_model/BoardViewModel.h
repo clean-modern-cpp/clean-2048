@@ -26,7 +26,7 @@ class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
 
   explicit BoardViewModel(QObject* parent = nullptr);
 
-  void intiWithDimension(int row, int col) override {
+  void initWithDimension(int row, int col) override {
     spdlog::info("row: {}, col: {}", row, col);
   }
 

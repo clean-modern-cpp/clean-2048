@@ -16,41 +16,44 @@ namespace console_ui {
 class BoardView : public presenter::BoardPresenterDelegate {
  public:
   std::string body() {
-    const std::string seperator = "---------------------------------\n";
     std::string body;
-    do {
-      performAction();
-      for (const auto& row : board) {
-        body += seperator + "| ";
-        for (const auto value : row) {
-          std::ostringstream oss;
-          oss << std::setw(5) << value;
-          body += (value != 0 ? oss.str() : "     ") + " | ";
-        }
-        body += "\n";
-      }
-      body += seperator + "\n";
-    } while (!actions.moveActions.empty());
-    return body;
+    while (moveCells()) {
+      body += currentBody();
+    }
+    actions.moveActions.clear();
+    const auto created = newCells();
+    const auto merged = mergeCells();
+    if (created || merged) {
+      body += currentBody();
+    }
+    return body.empty() ? currentBody() : body;
   }
 
-  void intiWithDimension(int row, int column) override {
+  void initWithDimension(int row, int column) override {
     board = Board(row, Row(column, emptyTile));
   }
 
   void present(common::Actions acts) override { actions = std::move(acts); }
 
  private:
-  void performAction() {
-    if (!moveCells()) {
-      actions.moveActions.clear();
-      newCells();
-      mergeCells();
+  std::string currentBody() {
+    const std::string seperator = "---------------------------------\n";
+    std::string body;
+    for (const auto& row : board) {
+      body += seperator + "|";
+      for (const auto value : row) {
+        std::ostringstream oss;
+        oss << " " << std::setw(5) << value;
+        body += (value != 0 ? oss.str() : "      ") + " |";
+      }
+      body += "\n";
     }
+    body += seperator + "\n";
+    return body;
   }
 
   bool moveCells() {
-    bool moved = false;
+    auto moved = false;
     for (auto& moveAction : actions.moveActions) {
       if (moveAction.from != moveAction.to) {
         const auto next = moveTo(moveAction.from, moveAction.to);
@@ -63,22 +66,34 @@ class BoardView : public presenter::BoardPresenterDelegate {
     return moved;
   }
 
-  void newCells() {
+  bool newCells() {
+    auto created = false;
     for (const auto& action : actions.newActions) {
       assert(cellAt(action.pos) == emptyTile);
       cellAt(action.pos) = action.value;
+      created = true;
     }
     actions.newActions.clear();
+    return created;
   }
 
-  void mergeCells() {
+  bool mergeCells() {
+    auto merged = false;
     for (const auto& action : actions.mergeActions) {
       assert(cellAt(action.pos) != emptyTile);
       cellAt(action.pos) = action.toValue;
+      merged = true;
     }
+    actions.mergeActions.clear();
+    return merged;
   }
 
-  int& cellAt(common::Position pos) { return board[pos.row][pos.col]; }
+  int& cellAt(common::Position pos) {
+    assert(pos.row >= 0 && pos.row < static_cast<common::Index>(board.size()));
+    assert(pos.col >= 0 &&
+           pos.col < static_cast<common::Index>(board[pos.row].size()));
+    return board[pos.row][pos.col];
+  }
 
   common::Position moveTo(common::Position from, common::Position to) {
     return {from.row + diff(from.row, to.row),

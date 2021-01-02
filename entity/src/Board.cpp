@@ -39,8 +39,6 @@ class Board::Impl {
     return true;
   }
 
-  void clear() { values = common::Values(rows * cols, empty); }
-
   common::NewAction addCell(common::Position pos, common::Value value) {
     assert(pos.row >= 0 && pos.row < rows);
     assert(pos.col >= 0 && pos.col < cols);
@@ -145,7 +143,10 @@ class Board::Impl {
   common::Values values;
 };
 
-Board::Board() : Board{0, 0, {}} {}
+constexpr static common::Index defaultRows = 4;
+constexpr static common::Index defaultCols = 4;
+
+Board::Board() : Board{defaultRows, defaultCols, {}} {}
 
 Board::Board(common::Index rows, common::Index cols,
              const common::NewActions& newActions)
@@ -164,8 +165,6 @@ common::Positions Board::emptyPositions() const {
 }
 
 bool Board::isGameOver() const { return impl->isGameOver(); }
-
-void Board::clear() { impl->clear(); }
 
 common::NewAction Board::addCell(common::Position pos, common::Value value) {
   return impl->addCell(pos, value);

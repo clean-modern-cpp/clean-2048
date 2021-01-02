@@ -26,13 +26,6 @@ inline common::Positions erase(common::Positions positions,
   return result;
 }
 
-constexpr common::Index defaultRows = 4;
-constexpr common::Index defaultCols = 4;
-
-entity::Board defaultBoard() {
-  return entity::Board{defaultRows, defaultCols, {}};
-}
-
 struct Cell {
   common::Position pos;
   common::Value value;
@@ -64,9 +57,9 @@ inline void addCells(entity::Board& board,
  *  0 0 0 0
  */
 TEST_CASE("Empty board") {
-  auto board = defaultBoard();
-  REQUIRE_EQ(board.getRows(), defaultRows);
-  REQUIRE_EQ(board.getCols(), defaultCols);
+  entity::Board board;
+  REQUIRE_EQ(board.getRows(), 4);
+  REQUIRE_EQ(board.getCols(), 4);
   REQUIRE_EQ(board.emptyPositions(), allPositionsOf(board));
 }
 
@@ -122,7 +115,7 @@ TEST_CASE("Game over is true") {
  *  0 0 0 0
  */
 TEST_CASE("Add one cell") {
-  auto board = defaultBoard();
+  entity::Board board;
   REQUIRE_EQ(board.addCell({1, 1}, 2), common::NewAction{{1, 1}, 2});
   const auto expectedPositions = erase(allPositionsOf(board), {1, 1});
   REQUIRE_EQ(board.emptyPositions(), expectedPositions);
@@ -138,7 +131,7 @@ TEST_CASE("Add one cell") {
  *  0 0 0 0
  */
 TEST_CASE("Add two cells") {
-  auto board = defaultBoard();
+  entity::Board board;
   REQUIRE_EQ(board.addCell({1, 1}, 2), common::NewAction{{1, 1}, 2});
   REQUIRE_EQ(board.addCell({2, 2}, 4), common::NewAction{{2, 2}, 4});
   const auto expectedPositions =
@@ -150,14 +143,6 @@ TEST_CASE("Add two cells") {
                                      });
 }
 
-TEST_CASE("Clear") {
-  auto board = defaultBoard();
-  REQUIRE_EQ(board.addCell({1, 1}, 2), common::NewAction{{1, 1}, 2});
-  REQUIRE_EQ(board.addCell({2, 2}, 4), common::NewAction{{2, 2}, 4});
-  board.clear();
-  REQUIRE_EQ(board.emptyPositions(), allPositionsOf(board));
-}
-
 /*
  *  0 0 0 0   left   0 0 0 0
  *  0 2 0 0          2 0 0 0
@@ -165,7 +150,7 @@ TEST_CASE("Clear") {
  *  0 0 0 0          0 0 0 0
  */
 TEST_CASE("Move one cell left") {
-  auto board = defaultBoard();
+  entity::Board board;
   board.addCell({1, 1}, 2);
   const auto expectedPositionsBefore = erase(allPositionsOf(board), {1, 1});
   REQUIRE_EQ(board.emptyPositions(), expectedPositionsBefore);
@@ -191,7 +176,7 @@ TEST_CASE("Move one cell left") {
  *  0 0 0 0           0 0 0 0
  */
 TEST_CASE("Move one cell right") {
-  auto board = defaultBoard();
+  entity::Board board;
   board.addCell({1, 1}, 2);
   const common::SwipeAction expectedAction{
       {
@@ -214,7 +199,7 @@ TEST_CASE("Move one cell right") {
  *  0 0 0 0        0 0 0 0
  */
 TEST_CASE("Move one cell up") {
-  auto board = defaultBoard();
+  entity::Board board;
   board.addCell({1, 1}, 2);
   const common::SwipeAction expectedAction{
       {
@@ -237,7 +222,7 @@ TEST_CASE("Move one cell up") {
  *  0 0 0 0          0 2 0 0
  */
 TEST_CASE("Move one cell down") {
-  auto board = defaultBoard();
+  entity::Board board;
   board.addCell({1, 1}, 2);
   const common::SwipeAction expectedAction{
       {
@@ -260,7 +245,7 @@ TEST_CASE("Move one cell down") {
  *  0 0 0 0          0 0 0 0
  */
 TEST_CASE("Move two cells left") {
-  auto board = defaultBoard();
+  entity::Board board;
   board.addCell({1, 1}, 2);
   board.addCell({1, 2}, 4);
   const auto expectedPositionsBefore =
@@ -291,7 +276,7 @@ TEST_CASE("Move two cells left") {
  *  0 0 0 0           0 0 0 0
  */
 TEST_CASE("Move two cells right") {
-  auto board = defaultBoard();
+  entity::Board board;
   board.addCell({1, 1}, 2);
   board.addCell({1, 2}, 4);
   const common::SwipeAction expectedAction{
@@ -318,7 +303,7 @@ TEST_CASE("Move two cells right") {
  *  0 0 0 0        0 0 0 0
  */
 TEST_CASE("Move two cells up") {
-  auto board = defaultBoard();
+  entity::Board board;
   board.addCell({1, 1}, 2);
   board.addCell({2, 1}, 4);
   const common::SwipeAction expectedAction{
@@ -345,7 +330,7 @@ TEST_CASE("Move two cells up") {
  *  0 0 0 0          0 4 0 0
  */
 TEST_CASE("Move two cells down") {
-  auto board = defaultBoard();
+  entity::Board board;
   board.addCell({1, 1}, 2);
   board.addCell({2, 1}, 4);
   const common::SwipeAction expectedAction{
@@ -372,7 +357,7 @@ TEST_CASE("Move two cells down") {
  *  0 0 0 0          0 0 0 0
  */
 TEST_CASE("Move two cells left and merge") {
-  auto board = defaultBoard();
+  entity::Board board;
   board.addCell({1, 1}, 2);
   board.addCell({1, 2}, 2);
   const auto expectedPositionsBefore =
@@ -403,7 +388,7 @@ TEST_CASE("Move two cells left and merge") {
  *  0 0 0 0           0 0 0 0
  */
 TEST_CASE("Move two cells right and merge") {
-  auto board = defaultBoard();
+  entity::Board board;
   board.addCell({1, 1}, 2);
   board.addCell({1, 2}, 2);
   const common::SwipeAction expectedAction{
@@ -430,7 +415,7 @@ TEST_CASE("Move two cells right and merge") {
  *  0 0 0 0        0 0 0 0
  */
 TEST_CASE("Move two cells up and merge") {
-  auto board = defaultBoard();
+  entity::Board board;
   board.addCell({0, 1}, 2);
   board.addCell({1, 1}, 2);
   const common::SwipeAction expectedAction{
@@ -456,7 +441,7 @@ TEST_CASE("Move two cells up and merge") {
  *  0 2 0 0          0 4 0 0
  */
 TEST_CASE("Move two cells up and merge") {
-  auto board = defaultBoard();
+  entity::Board board;
   board.addCell({2, 1}, 2);
   board.addCell({3, 1}, 2);
   const common::SwipeAction expectedAction{
@@ -482,7 +467,7 @@ TEST_CASE("Move two cells up and merge") {
  *  0 2 2 0          4 0 0 0
  */
 TEST_CASE("Move multi-line cells left and merge") {
-  auto board = defaultBoard();
+  entity::Board board;
   addCells(board);
   const common::Positions expectedPositionsBefore{
       {1, 3}, {2, 0}, {3, 0}, {3, 3}};
@@ -532,7 +517,7 @@ TEST_CASE("Move multi-line cells left and merge") {
  *  0 2 2 0           0 0 0 4
  */
 TEST_CASE("Move multi-line cells right and merge") {
-  auto board = defaultBoard();
+  entity::Board board;
   addCells(board);
   const common::SwipeAction expectedAction{
       {
@@ -578,7 +563,7 @@ TEST_CASE("Move multi-line cells right and merge") {
  *  0 2 2 0        0 0 0 0
  */
 TEST_CASE("Move multi-line cells up and merge") {
-  auto board = defaultBoard();
+  entity::Board board;
   addCells(board);
   const common::SwipeAction expectedAction{
       {
@@ -622,7 +607,7 @@ TEST_CASE("Move multi-line cells up and merge") {
  *  0 2 2 0          8 4 4 2
  */
 TEST_CASE("Move multi-line cells down and merge") {
-  auto board = defaultBoard();
+  entity::Board board;
   addCells(board);
   const common::SwipeAction expectedAction{
       {
@@ -668,7 +653,7 @@ TEST_CASE("Move multi-line cells down and merge") {
  *  0 0 0 0          0 0 0 0
  */
 TEST_CASE("Can not move") {
-  auto board = defaultBoard();
+  entity::Board board;
   board.addCell({1, 0}, 4);
   board.addCell({1, 1}, 2);
   REQUIRE_EQ(board.swipe(common::Direction::left), common::SwipeAction{});

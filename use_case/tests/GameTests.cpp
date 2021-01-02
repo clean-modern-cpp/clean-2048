@@ -23,7 +23,7 @@ std::ostringstream oss;
 template <bool GameOver>
 class BoardMockup {
  public:
-  BoardMockup() = default;
+  BoardMockup() { oss << "Board::Board()\n"; }
   BoardMockup(common::Index rows, common::Index cols,
               common::NewActions newActions) {
     oss << "Board::Board(" << rows << ", " << cols << ", " << newActions
@@ -181,7 +181,7 @@ struct Tester {
 TEST_CASE("New game") {
   Tester<false> tester;
   tester.game.newGame();
-  REQUIRE_EQ(oss.str(), R"(Board::clear()
+  REQUIRE_EQ(oss.str(), R"(Board::Board()
 Board::getRows() -> 4
 Board::getCols() -> 4
 BoardPresenter::initWithDimension(4, 4)
@@ -231,7 +231,7 @@ TEST_CASE("Load game when game is over") {
   Tester<true> tester;
   tester.game.loadGame();
   REQUIRE_EQ(oss.str(), R"(Storage::loadGame() -> {0, 0, 1, 0, 0, []}
-Board::clear()
+Board::Board()
 Board::getRows() -> 4
 Board::getCols() -> 4
 BoardPresenter::initWithDimension(4, 4)

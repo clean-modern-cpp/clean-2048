@@ -13,7 +13,9 @@ class Controller {
   ~Controller();
 
   void newGame();
-  void swipe(common::Direction d);
+  void loadGame();
+  void saveGame();
+  void swipe(common::Direction dir);
 
  private:
   class Impl;

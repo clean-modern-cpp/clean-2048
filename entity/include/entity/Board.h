@@ -11,7 +11,7 @@ class Board {
  public:
   Board();
   Board(common::Index rows, common::Index cols,
-        const common::NewActions& newActions);
+        const common::NewActions& newActions = {});
   ~Board();
 
   Board(Board&&);
@@ -23,7 +23,6 @@ class Board {
   common::Positions emptyPositions() const;
   bool isGameOver() const;
 
-  void clear();
   common::NewAction addCell(common::Position pos, common::Value value);
   common::SwipeAction swipe(common::Direction direction);
 

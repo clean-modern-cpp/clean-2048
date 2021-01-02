@@ -7,19 +7,21 @@
 #include "ScoreView.h"
 #include "presenter/BoardPresenter.h"
 #include "presenter/Controller.h"
+#include "presenter/GameOverPresenter.h"
 #include "presenter/ScorePresenter.h"
 
 namespace console_ui {
 
-class Application::Impl {
+class Application::Impl : public presenter::GameOverPresenterDelegate {
  public:
   Impl() {
     boardPresenter.setDelegate(&boardView);
     scorePresenter.setDelegate(&scoreView);
+    gameOverPresenter.setDelegate(this);
   }
 
   void execute() {
-    controller.newGame();
+    controller.loadGame();
     while (true) {
       show();
       const auto input = getInput();
@@ -32,15 +34,20 @@ class Application::Impl {
     }
   }
 
+  void present() override { isGameOver = true; }
+
  private:
   void show() {
     std::cout << scoreView.body();
     std::cout << boardView.body();
 
-    std::cout << "Please input:\n";
-    std::cout << "  - l: Left, r: Right, u: up, d: Down\n";
-    std::cout << "  - q: Quit\n";
-    std::cout << std::endl;
+    if (isGameOver) {
+    } else {
+      std::cout << "Please input:\n";
+      std::cout << "  - l: Left, r: Right, u: up, d: Down\n";
+      std::cout << "  - q: Quit\n";
+      std::cout << std::endl;
+    }
   }
 
   std::string getInput() {
@@ -49,12 +56,15 @@ class Application::Impl {
     return input;
   }
 
+  bool isGameOver = false;
+
   ScoreView scoreView;
   BoardView boardView;
 
   presenter::Controller controller;
   presenter::BoardPresenter boardPresenter;
   presenter::ScorePresenter scorePresenter;
+  presenter::GameOverPresenter gameOverPresenter;
 
   inline static const std::unordered_map<char, common::Direction> directionMap{
       {'l', common::Direction::left},

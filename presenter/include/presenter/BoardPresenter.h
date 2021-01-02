@@ -10,7 +10,7 @@ namespace presenter {
 
 class BoardPresenterDelegate : public common::NonCopyable {
  public:
-  virtual void intiWithDimension(int rows, int columns) = 0;
+  virtual void initWithDimension(int rows, int columns) = 0;
   virtual void present(common::Actions actions) = 0;
 };
 

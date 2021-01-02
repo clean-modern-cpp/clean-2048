@@ -35,7 +35,7 @@ class Game : public GameStorage, public GamePlay {
 
   void newGame() override {
     assert(boardPresenter && "Board presenter is null");
-    board.clear();
+    board = Board{};
     boardPresenter->initWithDimension(board.getRows(), board.getCols());
 
     common::Actions actions;
@@ -88,12 +88,12 @@ class Game : public GameStorage, public GamePlay {
   }
 
   void presentAll(common::Actions actions) {
-    assert(boardPresenter);
+    assert(boardPresenter && "Board presenter is null");
     boardPresenter->present(std::move(actions));
-    assert(scorePresenter);
+    assert(scorePresenter && "Score presenter is null");
     scorePresenter->present(score.getScore(), score.getBestScore());
     if (board.isGameOver()) {
-      assert(gameOverPresenter);
+      assert(gameOverPresenter && "Game over presenter is null");
       gameOverPresenter->present();
     }
   }
