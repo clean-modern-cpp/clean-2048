@@ -8,11 +8,9 @@
 #include <QObject>
 #include <QString>
 #include <QTimer>
-#include <unordered_map>
 
 #include "common/ModelHelper.h"
 #include "presenter/BoardPresenter.h"
-#include "presenter/Controller.h"
 
 namespace qt_view_model {
 
@@ -51,12 +49,6 @@ class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
     });
   }
 
-  Q_INVOKABLE void swipe(int key) {
-    if (directionMap.find(key) != directionMap.end()) {
-      controller.swipe(directionMap.at(key));
-    }
-  }
-
  signals:
   void rowsChanged(int rows);
   void colsChanged(int cols);
@@ -67,18 +59,10 @@ class BoardViewModel : public QObject, presenter::BoardPresenterDelegate {
   void mergeCell(int row, int col, QString toValue);
 
  private:
-  presenter::Controller controller;
   presenter::BoardPresenter boardPresenter;
 
   int rowsCache = 0;
   int colsCache = 0;
-
-  inline static const std::unordered_map<int, common::Direction> directionMap{
-      {Qt::Key_Left, common::Direction::left},
-      {Qt::Key_Right, common::Direction::right},
-      {Qt::Key_Up, common::Direction::up},
-      {Qt::Key_Down, common::Direction::down},
-  };
 };
 
 }  // namespace qt_view_model

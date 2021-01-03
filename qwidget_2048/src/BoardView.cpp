@@ -7,26 +7,36 @@
 #include "CellView.h"
 
 BoardView::BoardView(QWidget *parent) : QWidget(parent) {
+  connect(&boardViewModel, SIGNAL(initWith(int, int)), this,
+          SLOT(onInitWith(int, int)));
   connect(&boardViewModel, SIGNAL(newCell(int, int, QString)), this,
-          SLOT(newCell(int, int, QString)));
+          SLOT(onNewCell(int, int, QString)));
   connect(&boardViewModel, SIGNAL(startCellMove(int, int, int, int)), this,
-          SLOT(startCellMove(int, int, int, int)));
+          SLOT(onStartCellMove(int, int, int, int)));
   connect(&boardViewModel, SIGNAL(completeCellMove(int, int, int, int)), this,
-          SLOT(completeCellMove(int, int, int, int)));
-  connect(&boardViewModel, SIGNAL(changeCell(int, int, QString)), this,
-          SLOT(changeCell(int, int, QString)));
-
-  cells = std::vector<std::vector<CellView *>>(
-      4, std::vector<CellView *>(4, nullptr));
-  boardViewModel.restart();
+          SLOT(onCompleteCellMove(int, int, int, int)));
+  connect(&boardViewModel, SIGNAL(mergeCell(int, int, QString)), this,
+          SLOT(onMergeCell(int, int, QString)));
 }
 
 void BoardView::keyPressEvent(QKeyEvent *event) {
-  boardViewModel.swipe(event->key());
+  controller.swipe(event->key());
   QWidget::keyPressEvent(event);
 }
 
-void BoardView::newCell(int row, int col, QString value) {
+void BoardView::onInitWith(int rows, int cols) {
+  for (const auto &row : cells) {
+    for (const auto &cell : row) {
+      if (cell) {
+        delete cell;
+      }
+    }
+  }
+  cells = std::vector<std::vector<CellView *>>(
+      rows, std::vector<CellView *>(cols, nullptr));
+}
+
+void BoardView::onNewCell(int row, int col, QString value) {
   auto cell = new CellView(this);
   cell->resize(width() / 4, height() / 4);
   cell->setText(value);
@@ -42,7 +52,8 @@ void BoardView::newCell(int row, int col, QString value) {
   animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
-void BoardView::startCellMove(int fromRow, int fromCol, int toRow, int toCol) {
+void BoardView::onStartCellMove(int fromRow, int fromCol, int toRow,
+                                int toCol) {
   auto cell = cells[fromRow][fromCol];
   Q_ASSERT(cell != nullptr);
   auto animation = new QPropertyAnimation{cell, "pos"};
@@ -53,8 +64,8 @@ void BoardView::startCellMove(int fromRow, int fromCol, int toRow, int toCol) {
   animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
-void BoardView::completeCellMove(int fromRow, int fromCol, int toRow,
-                                 int toCol) {
+void BoardView::onCompleteCellMove(int fromRow, int fromCol, int toRow,
+                                   int toCol) {
   if (cells[toRow][toCol]) {
     delete cells[toRow][toCol];
   }
@@ -62,7 +73,7 @@ void BoardView::completeCellMove(int fromRow, int fromCol, int toRow,
   cells[fromRow][fromCol] = nullptr;
 }
 
-void BoardView::changeCell(int row, int col, QString value) {
+void BoardView::onMergeCell(int row, int col, QString value) {
   auto cell = cells[row][col];
   Q_ASSERT(cell != nullptr);
   cell->setText(value);

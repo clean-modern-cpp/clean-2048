@@ -17,6 +17,10 @@ ApplicationWindow {
 
     Board {
        id: board
+
+        Keys.onPressed: {
+            controller.swipe(event.key);
+        }
     }
 
     GameOverView {

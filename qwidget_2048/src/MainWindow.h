@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include "qt_view_model/Controller.h"
+#include "qt_view_model/GameOverViewModel.h"
 #include "qt_view_model/ScoreViewModel.h"
 
 namespace Ui {
@@ -17,15 +19,19 @@ class MainWindow : public QWidget {
   ~MainWindow();
 
  private slots:
-  void scoreChanged(int score);
-  void bestScoreChanged(int bestScore);
+  void onScoreChanged(int score);
+  void onBestScoreChanged(int bestScore);
+  void onGameOver();
+
+  void on_newGameButton_clicked();
 
  private:
-  void onScoreInc(int);
-  void onGameOver();
-  void onWin();
+  void closeEvent(QCloseEvent *bar);
 
   Ui::MainWindow *ui;
+
+  qt_view_model::Controller controller;
+  qt_view_model::GameOverViewModel gameOverViewModel;
   qt_view_model::ScoreViewModel scoreViewModel;
 };
 

@@ -50,10 +50,6 @@ Rectangle {
         }
     }
 
-    Keys.onPressed: {
-        boardViewModel.swipe(event.key);
-    }
-
     property var cells: []
 
     BoardViewModel {

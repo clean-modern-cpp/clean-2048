@@ -2,6 +2,7 @@
 #define CLEAN2048_QTVIEWMODEL_CONTROLLER_H_
 
 #include <QObject>
+#include <unordered_map>
 
 #include "presenter/Controller.h"
 
@@ -19,8 +20,21 @@ class Controller : public QObject {
 
   Q_INVOKABLE void saveGame() { controller.saveGame(); }
 
+  Q_INVOKABLE void swipe(int key) {
+    if (directionMap.find(key) != directionMap.end()) {
+      controller.swipe(directionMap.at(key));
+    }
+  }
+
  private:
   presenter::Controller controller;
+
+  inline static const std::unordered_map<int, common::Direction> directionMap{
+      {Qt::Key_Left, common::Direction::left},
+      {Qt::Key_Right, common::Direction::right},
+      {Qt::Key_Up, common::Direction::up},
+      {Qt::Key_Down, common::Direction::down},
+  };
 };
 
 }  // namespace qt_view_model

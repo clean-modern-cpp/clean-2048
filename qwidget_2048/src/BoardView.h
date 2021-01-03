@@ -7,6 +7,7 @@
 
 #include "CellView.h"
 #include "qt_view_model/BoardViewModel.h"
+#include "qt_view_model/Controller.h"
 
 class BoardView : public QWidget {
   Q_OBJECT
@@ -15,10 +16,11 @@ class BoardView : public QWidget {
   explicit BoardView(QWidget *parent = 0);
 
  private slots:
-  void newCell(int row, int col, QString value);
-  void startCellMove(int fromRow, int fromCol, int toRow, int toCol);
-  void completeCellMove(int fromRow, int fromCol, int toRow, int toCol);
-  void changeCell(int row, int col, QString value);
+  void onInitWith(int rows, int cols);
+  void onNewCell(int row, int col, QString value);
+  void onStartCellMove(int fromRow, int fromCol, int toRow, int toCol);
+  void onCompleteCellMove(int fromRow, int fromCol, int toRow, int toCol);
+  void onMergeCell(int row, int col, QString value);
 
  private:
   void keyPressEvent(QKeyEvent *event);
@@ -26,6 +28,7 @@ class BoardView : public QWidget {
   std::vector<std::vector<CellView *>> cells;
 
   qt_view_model::BoardViewModel boardViewModel;
+  qt_view_model::Controller controller;
 };
 
 #endif
