@@ -13,27 +13,27 @@ namespace router {
 
 class Router : public presenter::Router {
  public:
-  use_case_interface::GamePlay* getGamePlay() const override {
+  use_case_interface::GamePlay* getGamePlay() override {
     return use_case::getGamePlay();
   }
 
-  use_case_interface::GameStorage* getGameStorage() const override {
+  use_case_interface::GameStorage* getGameStorage() override {
     return use_case::getGameStorage();
   }
 
   void setBoardPresenter(
-      use_case_interface::BoardPresenter* presenter) const override {
+      use_case_interface::BoardPresenter* presenter) override {
     use_case::setBoardPresenter(presenter);
   }
 
-  void setGameOverPresenter(
-      use_case_interface::GameOverPresenter* presenter) const override {
-    use_case::setGameOverPresenter(presenter);
+  void setScorePresenter(
+      use_case_interface::ScorePresenter* presenter) override {
+    use_case::setScorePresenter(presenter);
   }
 
-  void setScorePresenter(
-      use_case_interface::ScorePresenter* presenter) const override {
-    use_case::setScorePresenter(presenter);
+  void setGameOverPresenter(
+      use_case_interface::GameOverPresenter* presenter) override {
+    use_case::setGameOverPresenter(presenter);
   }
 };
 

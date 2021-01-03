@@ -1,12 +1,12 @@
-#ifndef CLEAN2048_USECASE_STORAGE_H_
-#define CLEAN2048_USECASE_STORAGE_H_
+#ifndef CLEAN2048_USECASEINTERFACE_STORAGE_H_
+#define CLEAN2048_USECASEINTERFACE_STORAGE_H_
 
 #include <memory>
 
 #include "common/Model.h"
 #include "common/NonCopyable.h"
 
-namespace use_case {
+namespace use_case_interface {
 
 struct GameData {
   int bestScore = 0;
@@ -32,8 +32,6 @@ class Storage : public common::NonCopyable {
   virtual void clear() = 0;
 };
 
-void setStorage(const std::unique_ptr<Storage> storage);
-
-}  // namespace use_case
+}  // namespace use_case_interface
 
 #endif

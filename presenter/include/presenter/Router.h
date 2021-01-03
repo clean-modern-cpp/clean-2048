@@ -14,15 +14,15 @@ namespace presenter {
 
 class Router : public common::NonCopyable {
  public:
-  virtual use_case_interface::GamePlay* getGamePlay() const = 0;
-  virtual use_case_interface::GameStorage* getGameStorage() const = 0;
+  virtual use_case_interface::GamePlay* getGamePlay() = 0;
+  virtual use_case_interface::GameStorage* getGameStorage() = 0;
 
   virtual void setBoardPresenter(
-      use_case_interface::BoardPresenter* presenter) const = 0;
-  virtual void setGameOverPresenter(
-      use_case_interface::GameOverPresenter* presenter) const = 0;
+      use_case_interface::BoardPresenter* presenter) = 0;
   virtual void setScorePresenter(
-      use_case_interface::ScorePresenter* presenter) const = 0;
+      use_case_interface::ScorePresenter* presenter) = 0;
+  virtual void setGameOverPresenter(
+      use_case_interface::GameOverPresenter* presenter) = 0;
 };
 
 void setRouter(std::unique_ptr<Router> router);

@@ -6,15 +6,16 @@
 
 #include "common/ModelHelper.h"
 #include "use_case/Facade.h"
-#include "use_case/Random.h"
-#include "use_case/Storage.h"
 #include "use_case_interface/BoardPresenter.h"
 #include "use_case_interface/GameOverPresenter.h"
+#include "use_case_interface/Random.h"
 #include "use_case_interface/ScorePresenter.h"
+#include "use_case_interface/Storage.h"
 
 namespace std {
 
-std::ostream& operator<<(std::ostream& os, const use_case::GameData& gameData) {
+std::ostream& operator<<(std::ostream& os,
+                         const use_case_interface::GameData& gameData) {
   os << "{" << gameData.bestScore << ", " << gameData.score << ", "
      << gameData.isGameOver << ", " << gameData.rows << ", " << gameData.cols
      << ", " << gameData.newActions << "}";
@@ -48,7 +49,7 @@ class GameOverPresenterMockup : public use_case_interface::GameOverPresenter {
   void present() override { oss << "GameOverPresenter::present()\n"; }
 };
 
-class RandomMockup : public use_case::Random {
+class RandomMockup : public use_case_interface::Random {
  public:
   int next(int min, int max) override {
     oss << "Random::next(" << min << ", " << max << ")"
@@ -63,14 +64,14 @@ class RandomMockup : public use_case::Random {
   inline static std::vector<int> values{0, 2, 0, 1};
 };
 
-class StorageMockup : public use_case::Storage {
+class StorageMockup : public use_case_interface::Storage {
  public:
-  use_case::GameData loadGame() override {
-    auto gameData = use_case::GameData{};
+  use_case_interface::GameData loadGame() override {
+    use_case_interface::GameData gameData{};
     oss << "Storage::loadGame() -> " << gameData << "\n";
     return gameData;
   }
-  void saveGame(const use_case::GameData& gameData) override {
+  void saveGame(const use_case_interface::GameData& gameData) override {
     oss << "Storage::saveGame(" << gameData << ")\n";
   }
   void clear() override { oss << "Storage::clear()\n"; }

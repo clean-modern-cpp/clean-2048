@@ -3,11 +3,11 @@
 
 #include <random>
 
-#include "use_case/Random.h"
+#include "use_case_interface/Random.h"
 
 namespace use_case {
 
-class RandomImpl : public Random {
+class RandomImpl : public use_case_interface::Random {
  public:
   RandomImpl() : gen{rd()} {}
 

@@ -64,10 +64,10 @@ const std::string newActions = "newActions";
 
 }  // namespace key
 
-use_case::GameData Storage::loadGame() {
+use_case_interface::GameData Storage::loadGame() {
   try {
     YAML::Node node = YAML::LoadFile(fileName);
-    use_case::GameData gameData;
+    use_case_interface::GameData gameData;
     gameData.bestScore = node[key::bestScore].as<int>();
     gameData.score = node[key::score].as<int>();
     gameData.isGameOver = node[key::isGameOver].as<bool>();
@@ -80,7 +80,7 @@ use_case::GameData Storage::loadGame() {
   }
 }
 
-void Storage::saveGame(const use_case::GameData& gameData) {
+void Storage::saveGame(const use_case_interface::GameData& gameData) {
   YAML::Node node;
   node[key::bestScore] = gameData.bestScore;
   node[key::score] = gameData.score;

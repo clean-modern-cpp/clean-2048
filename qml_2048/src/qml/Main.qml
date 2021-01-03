@@ -1,7 +1,7 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.1
-import Controller 1.0
-import GameOverViewModel 1.0
+import Clean_2048.Controller 1.0
+import Clean_2048.GameOverViewModel 1.0
 
 ApplicationWindow {
     id: window;

@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import BoardViewModel 1.0
+import Clean_2048.BoardViewModel 1.0
 
 Rectangle {
     id: board

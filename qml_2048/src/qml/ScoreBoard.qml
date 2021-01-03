@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import ScoreViewModel 1.0
+import Clean_2048.ScoreViewModel 1.0
 
 Rectangle {
     id: scoreBoard

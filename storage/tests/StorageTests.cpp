@@ -8,7 +8,8 @@
 
 namespace std {
 
-std::ostream &operator<<(std::ostream &os, const use_case::GameData &gameData) {
+std::ostream &operator<<(std::ostream &os,
+                         const use_case_interface::GameData &gameData) {
   os << "{" << gameData.bestScore << ", " << gameData.score << ", "
      << gameData.isGameOver << ", " << gameData.rows << ", " << gameData.cols
      << ", " << gameData.newActions << "}";
@@ -28,7 +29,7 @@ TEST_CASE("Default game storage") {
 
 TEST_CASE("Save and load game") {
   storage::Storage storage;
-  const use_case::GameData gameData{
+  const use_case_interface::GameData gameData{
       100,
       10,
       false,

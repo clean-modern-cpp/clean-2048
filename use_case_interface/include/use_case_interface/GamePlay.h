@@ -1,5 +1,5 @@
-#ifndef CLEAN2048_USECASE_GAMEPLAY_H_
-#define CLEAN2048_USECASE_GAMEPLAY_H_
+#ifndef CLEAN2048_USECASEINTERFACE_GAMEPLAY_H_
+#define CLEAN2048_USECASEINTERFACE_GAMEPLAY_H_
 
 #include "common/Model.h"
 #include "common/NonCopyable.h"

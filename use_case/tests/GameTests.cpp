@@ -5,11 +5,12 @@
 
 #include "Game.h"
 #include "common/ModelHelper.h"
-#include "use_case/Random.h"
+#include "use_case_interface/Random.h"
 
 namespace std {
 
-std::ostream &operator<<(std::ostream &os, const use_case::GameData &gameData) {
+std::ostream &operator<<(std::ostream &os,
+                         const use_case_interface::GameData &gameData) {
   os << "{" << gameData.bestScore << ", " << gameData.score << ", "
      << gameData.isGameOver << ", " << gameData.rows << ", " << gameData.cols
      << ", " << gameData.newActions << "}";
@@ -119,7 +120,7 @@ class GameOverPresenterMockup : public use_case_interface::GameOverPresenter {
   void present() override { oss << "GameOverPresenter::present()\n"; }
 };
 
-class RandomMockup : public use_case::Random {
+class RandomMockup : public use_case_interface::Random {
  public:
   int next(int min, int max) override {
     REQUIRE(index < values.size());
@@ -134,22 +135,24 @@ class RandomMockup : public use_case::Random {
 };
 
 template <bool GameOver>
-class StorageMockup : public use_case::Storage {
+class StorageMockup : public use_case_interface::Storage {
  public:
-  use_case::GameData loadGame() override {
-    auto gameData = GameOver ? use_case::GameData{}
-                             : use_case::GameData{100,
-                                                  10,
-                                                  false,
-                                                  4,
-                                                  4,
-                                                  {
-                                                      {{0, 1}, 2},
-                                                  }};
+  use_case_interface::GameData loadGame() override {
+    auto gameData = GameOver ? use_case_interface::GameData{}
+                             : use_case_interface::GameData{
+                                   100,
+                                   10,
+                                   false,
+                                   4,
+                                   4,
+                                   {
+                                       {{0, 1}, 2},
+                                   },
+                               };
     oss << "Storage::loadGame() -> " << gameData << "\n";
     return gameData;
   }
-  void saveGame(const use_case::GameData &gameData) override {
+  void saveGame(const use_case_interface::GameData &gameData) override {
     oss << "Storage::saveGame(" << gameData << ")\n";
   }
   void clear() override { oss << "Storage::clear()\n"; }

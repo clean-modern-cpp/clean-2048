@@ -6,12 +6,12 @@
 
 #include "RandomImpl.h"
 #include "common/Model.h"
-#include "use_case/Storage.h"
 #include "use_case_interface/BoardPresenter.h"
 #include "use_case_interface/GameOverPresenter.h"
 #include "use_case_interface/GamePlay.h"
 #include "use_case_interface/GameStorage.h"
 #include "use_case_interface/ScorePresenter.h"
+#include "use_case_interface/Storage.h"
 
 namespace use_case {
 
@@ -31,8 +31,12 @@ class Game : public use_case_interface::GamePlay,
     gameOverPresenter = presenter;
   }
 
-  void setRandom(std::unique_ptr<Random> r) { random = std::move(r); }
-  void setStorage(std::unique_ptr<Storage> s) { storage = std::move(s); }
+  void setRandom(std::unique_ptr<use_case_interface::Random> r) {
+    random = std::move(r);
+  }
+  void setStorage(std::unique_ptr<use_case_interface::Storage> s) {
+    storage = std::move(s);
+  }
 
   void newGame() override {
     assert(boardPresenter && "Board presenter is null");
@@ -107,8 +111,8 @@ class Game : public use_case_interface::GamePlay,
   use_case_interface::ScorePresenter* scorePresenter = nullptr;
   use_case_interface::GameOverPresenter* gameOverPresenter = nullptr;
 
-  std::unique_ptr<Random> random;
-  std::unique_ptr<Storage> storage;
+  std::unique_ptr<use_case_interface::Random> random;
+  std::unique_ptr<use_case_interface::Storage> storage;
 };
 
 }  // namespace use_case

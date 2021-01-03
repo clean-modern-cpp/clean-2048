@@ -29,7 +29,8 @@ CellView::~CellView() { delete ui; }
 void CellView::setText(const QString &value) {
   ui->label->setText(value);
   QString color{value == "2" || value == "4" ? "#786f66" : "#f7f8f0"};
-  ui->label->setStyleSheet(
-      "background: " + backgroundMap.at(value) + "; color: " + color +
-      "; font-size: " + fontSizeMap.at(value.length()) + "px;");
+  ui->label->setStyleSheet("background: " + backgroundMap.at(value) +
+                           "; color: " + color +
+                           "; font-size: " + fontSizeMap.at(value.length()) +
+                           "px; font-weight: bold;");
 }

@@ -12,13 +12,14 @@ int main(int argc, char *argv[]) {
   presenter::setRouter(std::make_unique<router::Router>());
   use_case::setStorage(std::make_unique<storage::Storage>());
 
-  qmlRegisterType<qt_view_model::Controller>("Controller", 1, 0, "Controller");
-  qmlRegisterType<qt_view_model::BoardViewModel>("BoardViewModel", 1, 0,
-                                                 "BoardViewModel");
-  qmlRegisterType<qt_view_model::ScoreViewModel>("ScoreViewModel", 1, 0,
-                                                 "ScoreViewModel");
-  qmlRegisterType<qt_view_model::GameOverViewModel>("GameOverViewModel", 1, 0,
-                                                    "GameOverViewModel");
+  qmlRegisterType<qt_view_model::Controller>("Clean_2048.Controller", 1, 0,
+                                             "Controller");
+  qmlRegisterType<qt_view_model::BoardViewModel>("Clean_2048.BoardViewModel", 1,
+                                                 0, "BoardViewModel");
+  qmlRegisterType<qt_view_model::ScoreViewModel>("Clean_2048.ScoreViewModel", 1,
+                                                 0, "ScoreViewModel");
+  qmlRegisterType<qt_view_model::GameOverViewModel>(
+      "Clean_2048.GameOverViewModel", 1, 0, "GameOverViewModel");
 
   QApplication app(argc, argv);
   app.setApplicationName("2048");

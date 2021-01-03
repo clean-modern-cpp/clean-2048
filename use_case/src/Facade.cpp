@@ -1,3 +1,5 @@
+#include "use_case/Facade.h"
+
 #include "Game.h"
 #include "entity/Board.h"
 #include "entity/Score.h"
@@ -26,11 +28,11 @@ void setGameOverPresenter(use_case_interface::GameOverPresenter* presenter) {
   global::game.setGameOverPresenter(presenter);
 }
 
-void setRandom(std::unique_ptr<Random> random) {
+void setRandom(std::unique_ptr<use_case_interface::Random> random) {
   global::game.setRandom(std::move(random));
 }
 
-void setStorage(std::unique_ptr<Storage> storage) {
+void setStorage(std::unique_ptr<use_case_interface::Storage> storage) {
   global::game.setStorage(std::move(storage));
 }
 
