@@ -1,5 +1,7 @@
 #include "presenter/BoardPresenter.h"
 
+#include <cassert>
+
 #include "GetRouter.h"
 #include "use_case_interface/BoardPresenter.h"
 
@@ -13,14 +15,12 @@ class BoardPresenter::Impl : public use_case_interface::BoardPresenter {
   }
 
   void initWithDimension(int row, int column) override {
-    if (delegate) {
-      delegate->initWithDimension(row, column);
-    }
+    assert(delegate && "Delegate is null");
+    delegate->initWithDimension(row, column);
   }
   void present(common::Actions actions) override {
-    if (delegate) {
-      delegate->present(actions);
-    }
+    assert(delegate && "Delegate is null");
+    delegate->present(actions);
   }
 
  private:

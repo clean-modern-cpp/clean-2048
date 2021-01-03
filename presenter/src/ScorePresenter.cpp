@@ -1,5 +1,7 @@
 #include "presenter/ScorePresenter.h"
 
+#include <cassert>
+
 #include "GetRouter.h"
 #include "use_case_interface/ScorePresenter.h"
 
@@ -13,9 +15,8 @@ class ScorePresenter::Impl : public use_case_interface::ScorePresenter {
   }
 
   void present(int score, int bestScore) override {
-    if (delegate) {
-      delegate->present(score, bestScore);
-    }
+    assert(delegate && "Delegate is null");
+    delegate->present(score, bestScore);
   }
 
  private:

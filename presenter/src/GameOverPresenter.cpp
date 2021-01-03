@@ -1,5 +1,7 @@
 #include "presenter/GameOverPresenter.h"
 
+#include <cassert>
+
 #include "GetRouter.h"
 #include "use_case_interface/GameOverPresenter.h"
 
@@ -13,9 +15,8 @@ class GameOverPresenter::Impl : public use_case_interface::GameOverPresenter {
   }
 
   void present() override {
-    if (delegate) {
-      delegate->present();
-    }
+    assert(delegate && "Delegate is null");
+    delegate->present();
   }
 
  private:
