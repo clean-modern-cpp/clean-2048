@@ -1,10 +1,12 @@
 #include "console_ui/Application.h"
+#include "router/Router.h"
 #include "storage/Storage.h"
-#include "use_case/Storage.h"
 
 int main() {
-  console_ui::Application app;
+  presenter::setRouter(std::make_unique<router::Router>());
   use_case::setStorage(std::make_unique<storage::Storage>());
+
+  console_ui::Application app;
   app.execute();
 
   return 0;

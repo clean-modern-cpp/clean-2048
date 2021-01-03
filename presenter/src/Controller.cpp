@@ -1,15 +1,16 @@
 #include "presenter/Controller.h"
 
-#include "use_case/GamePlay.h"
-#include "use_case/GameStorage.h"
+#include "GetRouter.h"
+#include "use_case_interface/GamePlay.h"
+#include "use_case_interface/GameStorage.h"
 
 namespace presenter {
 
 class Controller::Impl {
  public:
   Impl()
-      : gamePlay{use_case::getGamePlay()},
-        gameStorage{use_case::getGameStorage()} {}
+      : gamePlay{getRouter()->getGamePlay()},
+        gameStorage{getRouter()->getGameStorage()} {}
 
   void newGame() { gameStorage->newGame(); }
 
@@ -20,8 +21,8 @@ class Controller::Impl {
   void swipe(common::Direction dir) { gamePlay->swipe(dir); }
 
  private:
-  use_case::GamePlay* gamePlay;
-  use_case::GameStorage* gameStorage;
+  use_case_interface::GamePlay* gamePlay;
+  use_case_interface::GameStorage* gameStorage;
 };
 
 Controller::Controller() : impl(std::make_unique<Impl>()) {}

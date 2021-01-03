@@ -3,7 +3,7 @@
 
 #include "common/NonCopyable.h"
 
-namespace use_case {
+namespace use_case_interface {
 
 class GameStorage : public common::NonCopyable {
  public:
@@ -12,8 +12,6 @@ class GameStorage : public common::NonCopyable {
   virtual void saveGame() = 0;
 };
 
-GameStorage* getGameStorage();
-
-}  // namespace use_case
+}  // namespace use_case_interface
 
 #endif

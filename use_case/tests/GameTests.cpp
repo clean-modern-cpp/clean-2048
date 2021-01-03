@@ -96,7 +96,7 @@ class ScoreMockup {
   }
 };
 
-class BoardPresenterMockup : public use_case::BoardPresenter {
+class BoardPresenterMockup : public use_case_interface::BoardPresenter {
  public:
   void initWithDimension(int rows, int cols) override {
     oss << "BoardPresenter::initWithDimension(" << rows << ", " << cols
@@ -107,14 +107,14 @@ class BoardPresenterMockup : public use_case::BoardPresenter {
   }
 };
 
-class ScorePresenterMockup : public use_case::ScorePresenter {
+class ScorePresenterMockup : public use_case_interface::ScorePresenter {
  public:
   void present(int score, int bestScore) override {
     oss << "ScorePresenter::present(" << score << ", " << bestScore << ")\n";
   }
 };
 
-class GameOverPresenterMockup : public use_case::GameOverPresenter {
+class GameOverPresenterMockup : public use_case_interface::GameOverPresenter {
  public:
   void present() override { oss << "GameOverPresenter::present()\n"; }
 };

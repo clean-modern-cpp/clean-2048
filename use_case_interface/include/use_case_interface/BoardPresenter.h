@@ -4,7 +4,7 @@
 #include "common/Model.h"
 #include "common/NonCopyable.h"
 
-namespace use_case {
+namespace use_case_interface {
 
 class BoardPresenter : public common::NonCopyable {
  public:
@@ -12,8 +12,6 @@ class BoardPresenter : public common::NonCopyable {
   virtual void present(common::Actions actions) = 0;
 };
 
-void setBoardPresenter(BoardPresenter* presenter);
-
-}  // namespace use_case
+}  // namespace use_case_interface
 
 #endif

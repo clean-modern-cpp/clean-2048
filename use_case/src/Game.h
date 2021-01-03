@@ -6,27 +6,28 @@
 
 #include "RandomImpl.h"
 #include "common/Model.h"
-#include "use_case/BoardPresenter.h"
-#include "use_case/GameOverPresenter.h"
-#include "use_case/GamePlay.h"
-#include "use_case/GameStorage.h"
-#include "use_case/ScorePresenter.h"
 #include "use_case/Storage.h"
+#include "use_case_interface/BoardPresenter.h"
+#include "use_case_interface/GameOverPresenter.h"
+#include "use_case_interface/GamePlay.h"
+#include "use_case_interface/GameStorage.h"
+#include "use_case_interface/ScorePresenter.h"
 
 namespace use_case {
 
 template <typename Board, typename Score>
-class Game : public GameStorage, public GamePlay {
+class Game : public use_case_interface::GamePlay,
+             public use_case_interface::GameStorage {
  public:
   Game() : random{std::make_unique<RandomImpl>()} {}
 
-  void setBoardPresenter(BoardPresenter* presenter) {
+  void setBoardPresenter(use_case_interface::BoardPresenter* presenter) {
     boardPresenter = presenter;
   }
-  void setScorePresenter(ScorePresenter* presenter) {
+  void setScorePresenter(use_case_interface::ScorePresenter* presenter) {
     scorePresenter = presenter;
   }
-  void setGameOverPresenter(GameOverPresenter* presenter) {
+  void setGameOverPresenter(use_case_interface::GameOverPresenter* presenter) {
     gameOverPresenter = presenter;
   }
 
@@ -102,13 +103,13 @@ class Game : public GameStorage, public GamePlay {
   Board board;
   Score score;
 
-  BoardPresenter* boardPresenter = nullptr;
-  ScorePresenter* scorePresenter = nullptr;
-  GameOverPresenter* gameOverPresenter = nullptr;
+  use_case_interface::BoardPresenter* boardPresenter = nullptr;
+  use_case_interface::ScorePresenter* scorePresenter = nullptr;
+  use_case_interface::GameOverPresenter* gameOverPresenter = nullptr;
 
   std::unique_ptr<Random> random;
   std::unique_ptr<Storage> storage;
-};  // namespace use_case
+};
 
 }  // namespace use_case
 

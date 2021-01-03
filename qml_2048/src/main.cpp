@@ -5,10 +5,11 @@
 #include "qt_view_model/Controller.h"
 #include "qt_view_model/GameOverViewModel.h"
 #include "qt_view_model/ScoreViewModel.h"
+#include "router/Router.h"
 #include "storage/Storage.h"
-#include "use_case/Storage.h"
 
 int main(int argc, char *argv[]) {
+  presenter::setRouter(std::make_unique<router::Router>());
   use_case::setStorage(std::make_unique<storage::Storage>());
 
   qmlRegisterType<qt_view_model::Controller>("Controller", 1, 0, "Controller");

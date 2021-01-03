@@ -1,14 +1,15 @@
 #include "presenter/GameOverPresenter.h"
 
-#include "use_case/GameOverPresenter.h"
+#include "GetRouter.h"
+#include "use_case_interface/GameOverPresenter.h"
 
 namespace presenter {
 
-class GameOverPresenter::Impl : public use_case::GameOverPresenter {
+class GameOverPresenter::Impl : public use_case_interface::GameOverPresenter {
  public:
   void setDelegate(GameOverPresenterDelegate* d) {
     delegate = d;
-    use_case::setGameOverPresenter(this);
+    getRouter()->setGameOverPresenter(this);
   }
 
   void present() override {

@@ -1,14 +1,15 @@
 #include "presenter/BoardPresenter.h"
 
-#include "use_case/BoardPresenter.h"
+#include "GetRouter.h"
+#include "use_case_interface/BoardPresenter.h"
 
 namespace presenter {
 
-class BoardPresenter::Impl : public use_case::BoardPresenter {
+class BoardPresenter::Impl : public use_case_interface::BoardPresenter {
  public:
   void setDelegate(BoardPresenterDelegate* d) {
     delegate = d;
-    use_case::setBoardPresenter(this);
+    getRouter()->setBoardPresenter(this);
   }
 
   void initWithDimension(int row, int column) override {

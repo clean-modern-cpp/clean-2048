@@ -181,26 +181,17 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="tips">
-           <property name="font">
-            <font>
-             <family>Courier</family>
-             <pointsize>12</pointsize>
-            </font>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
-           <property name="styleSheet">
-            <string notr="true">color:#B3AFA7</string>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
            </property>
-           <property name="text">
-            <string>Join the numbers and get to the 2048 tile!</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
+          </spacer>
          </item>
          <item>
           <widget class="QPushButton" name="newGameButton">

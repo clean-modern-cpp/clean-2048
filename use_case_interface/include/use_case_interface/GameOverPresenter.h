@@ -4,15 +4,13 @@
 #include "common/Model.h"
 #include "common/NonCopyable.h"
 
-namespace use_case {
+namespace use_case_interface {
 
 class GameOverPresenter : public common::NonCopyable {
  public:
   virtual void present() = 0;
 };
 
-void setGameOverPresenter(GameOverPresenter* presenter);
-
-}  // namespace use_case
+}  // namespace use_case_interface
 
 #endif

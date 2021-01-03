@@ -1,0 +1,2 @@
+add_library(use_case_interface INTERFACE)
+target_include_directories(use_case_interface INTERFACE include)

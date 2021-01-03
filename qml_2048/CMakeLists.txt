@@ -6,5 +6,13 @@ find_package(
 set(CMAKE_AUTORCC ON)
 
 add_executable(qml_2048 src/main.cpp src/qml.qrc)
-target_link_libraries(qml_2048 PRIVATE Qt5::Core Qt5::Quick Qt5::Widgets
-                                       qt_view_model storage use_case)
+target_link_libraries(
+  qml_2048
+  PRIVATE Qt5::Core
+          Qt5::Quick
+          Qt5::Widgets
+          qt_view_model
+          presenter
+          router
+          storage
+          use_case)
