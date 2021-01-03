@@ -1,0 +1,4 @@
+add_executable(integration_tests src/UseCaseTests.cpp)
+target_link_libraries(integration_tests PRIVATE doctest use_case)
+
+doctest_discover_tests(integration_tests)
